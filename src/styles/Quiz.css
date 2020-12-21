@@ -1,0 +1,16 @@
+/* .Home {
+ background-image: url("../images/bg.jpg");
+ background-repeat: no-repeat, repeat;
+background-color: #cc323c; */
+
+#seg1 {
+  background-image: url("../images/bg1.png");
+  min-height: 1000px;
+  border-color: transparent;
+  outline-color: transparent;
+  box-shadow: none;
+  margin-bottom: 0;
+  margin-top: 0;
+  background-repeat: no-repeat;
+  background-position: 50% -8rem;
+}

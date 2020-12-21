@@ -1,0 +1,11 @@
+#container{
+  text-align: left;
+  position: absolute;
+  left: 10%;
+}
+#img-div {
+  text-align: right;
+  position: absolute;
+  left: 100%;
+  top: 20rem;
+}
