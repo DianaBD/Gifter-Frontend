@@ -6,6 +6,7 @@ import './styles/App.css';
 import { HashRouter, Switch, Route, Link, Redirect } from 'react-router-dom'
 import Home from './components/Home'
 import Quiz from './components/Quiz'
+import About from "./components/About";
 import React, { Component, useState } from 'react'
 import {
   Button,
@@ -38,6 +39,7 @@ function App() {
           <Route exact path={"/"}> <Redirect to="/home" /> </Route>
           <Route exact path={"/home"} component={Home}></Route>
           <Route path={"/quiz"} component={Quiz}/>
+          <Route path={"/about"} component={About}/>
         </Switch>
       </HashRouter>
     </div>

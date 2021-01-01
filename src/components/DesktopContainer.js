@@ -82,7 +82,7 @@ class DesktopContainer extends Component {
               <Container id="menu-container" className={ fixed ? "vertical-center" : null}>
                 <Image alt='sss' src={`/logo_small.png`} size='small' id="logo" className={fixed? "shrinked" : "normal"} />
                 <div id="menu-btn-div">
-                  <Link to='/home'>
+                  <Link to='/about'>
                     <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
                     ABOUT
                     </Button>
