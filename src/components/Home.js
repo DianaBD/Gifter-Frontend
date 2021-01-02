@@ -39,7 +39,6 @@ const { MediaContextProvider, Media } = createMedia({
  * It can be more complicated, but you can create really flexible markup.
  */
 
-
 // <MobileContainer>{children}</MobileContainer>
 
 const ResponsiveContainer = ({ children }) => (
@@ -63,7 +62,7 @@ function Home() {
         <Segment id='seg1'>
           <HomepageHeading id="heading"/>
         </Segment>
-        <Segment id='seg2' style={{ padding: '0em 0em'}} vertical>
+        {/* <Segment id='seg2' style={{ padding: '0em 0em'}} vertical>
           <Grid container stackable verticalAlign='middle'>
             <Grid.Row>
               <Grid.Column width={8}>
@@ -123,20 +122,20 @@ function Home() {
               I'm Still Quite Interested
             </Button>
           </Container>
-        </Segment>
+        </Segment> */}
 
         <Segment inverted vertical style={{ padding: '5em 0em' }}>
           <Container>
             <Grid divided inverted stackable>
               <Grid.Row>
                 <Grid.Column width={3}>
-                  <Header inverted as='h4' content='About' />
-                  <List link inverted>
+                  <Header inverted as='h4' content='Copyright © Gifter 2020' />
+                 {/* <List link inverted>
                     <List.Item as='a'>Contact Us</List.Item>
                     <List.Item as='a'>Gifter stuff</List.Item>
-                  </List>
+                  </List> */}
                 </Grid.Column>
-                <Grid.Column width={3}>
+                {/* <Grid.Column width={3}>
                   <Header inverted as='h4' content='Services' />
                   <List link inverted>
                     <List.Item as='a'>Banana Pre-Order</List.Item>
@@ -150,9 +149,9 @@ function Home() {
                   <p>
                     Extra space for a call to action inside the footer that could help re-engage users.
                   </p>
-                </Grid.Column>
+                </Grid.Column> */}
               </Grid.Row>
-            </Grid>
+            </Grid> 
           </Container>
         </Segment>
       </ResponsiveContainer>
