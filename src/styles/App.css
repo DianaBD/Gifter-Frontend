@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+
+:root {
+  --white: #ffffff;
+  --blue: #3A86FF;
+  --purple: #8338EC;
+  --pink: #FF006E;
+  --red: #FB5607;
+  --yellow: #FED137;
+  --light-gray: #e6e6e6;
+  --light-black: #212529;
+}

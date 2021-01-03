@@ -80,21 +80,27 @@ class DesktopContainer extends Component {
             >
 
               <Container id="menu-container" className={ fixed ? "vertical-center" : null}>
-                <Link to='/home'>
-                <Image alt='sss' src={`/logo_small.png`} size='small' id="logo" className={fixed? "shrinked" : "normal"} />
-                </Link>
-                <div id="menu-btn-div">
-                  <Link to='/about'>
-                    <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                    ABOUT
-                    </Button>
-                  </Link>
-                  <Link to='/quiz'>
-                    <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                    TAKE THE MAGIC QUIZ
-                    </Button>
-                  </Link>
-                </div>
+                {/*<div id="logo-div">*/}
+                <Grid columns={2} id="menu-grid">
+                <Grid.Column floated='left'>
+                  <Image alt='sss' src={`/logo_small.png`} size='small' id="logo" className={fixed? "shrinked" : "normal"} />
+                </Grid.Column>
+                {/*<div id="menu-btn-div">*/}
+                <Grid.Column floated='right'>
+                 <div id="menu-btn-div">
+                    <Link to='/home'>
+                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                      ABOUT
+                      </Button>
+                    </Link>
+                    <Link to='/quiz'>
+                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                      TAKE QUIZ
+                      </Button>
+                    </Link>
+                  </div>
+                </Grid.Column>
+                </Grid>
               </Container>
 
             </Menu>

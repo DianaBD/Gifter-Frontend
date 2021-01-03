@@ -38,14 +38,15 @@ import sot from '../images/sot.png';
 import sotie from '../images/sotie.png';
 import altceva from '../images/altceva.png';
 import aniversare from '../images/aniversare.png';
-import cadouCasaNoua from '../images/cadou_casa_noua.png';
-import Craciun from '../images/craciun.png';
-import Paste from '../images/paste.png';
+import cadou_de_casa_noua from '../images/cadou_casa_noua.png';
+import craciun from '../images/craciun.png';
+import paste from '../images/paste.png';
 import dragobete from '../images/dragobete.png';
-import ziNastere from '../images/zi_nastere.png';
+import zi_de_nastere from '../images/zi_nastere.png';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import React, { Component, useState } from 'react'
+import axios from 'axios'
 
 import {
   Button,
@@ -60,6 +61,7 @@ import {
   Segment,
   Sidebar,
   Visibility,
+  Radio
 } from 'semantic-ui-react'
 
 const { MediaContextProvider, Media } = createMedia({
@@ -70,19 +72,8 @@ const { MediaContextProvider, Media } = createMedia({
   },
 })
 
-/* Heads up!
- * Neither Semantic UI nor Semantic UI React offer a responsive navbar, however, it can be implemented easily.
- * It can be more complicated, but you can create really flexible markup.
- */
-
-
 // <MobileContainer>{children}</MobileContainer>
-
 const ResponsiveContainer = ({ children }) => (
-  /* Heads up!
-   * For large applications it may not be best option to put all page into these containers at
-   * they will be rendered twice for SSR.
-   */
   <MediaContextProvider>
     <DesktopContainer>{children}</DesktopContainer>
   </MediaContextProvider>
@@ -91,7 +82,130 @@ const ResponsiveContainer = ({ children }) => (
 ResponsiveContainer.propTypes = {
   children: PropTypes.node,
 }
-// <Image bordered rounded size='large' src='/.png' />
+
+const ageList = [
+  { name: "Sub 18 ani"  , value: "mai_mic_18"  },
+  { name: "18-25 ani"   , value: "18_25"},
+  { name: "26-35 ani"   , value: "26_35"},
+  { name: "36-45 ani"   , value: "36_45"},
+  { name: "46-60 ani"   , value: "46_60"},
+  { name: "Peste 60 ani", value: "60_plus"}
+]
+
+const barbatRoleList = [
+  { name: "Tata"   , value: "tata"   },
+  { name: "Bunic"  , value: "bunic"  },
+  { name: "Fiu"    , value: "fiu"    },
+  { name: "Frate"  , value: "frate"  },
+  { name: "Prieten", value: "prieten"},
+  { name: "Iubit"  , value: "iubit"  },
+  { name: "Sot"    , value: "sot"    },
+  { name: "Socru"  , value: "socru"  },
+  { name: "Altceva", value: "altceva"}
+]
+
+const femeieRoleList = [
+  { name: "Mama"    ,  value: "mama"    },
+  { name: "Bunica"  ,  value: "bunica"  },
+  { name: "Fiica"   ,  value: "fiica"   },
+  { name: "Sora"    ,  value: "sora"    },
+  { name: "Prietena",  value: "prietena"},
+  { name: "Iubita"  ,  value: "iubita"  },
+  { name: "Sotie"   ,  value: "sotie"   },
+  { name: "Soacra"  ,  value: "soacra"  },
+  { name: "Altceva" ,  value: "altceva" }
+]
+
+const occasionList = [
+  { name: "Zi De Nastere"     , value: "zi_de_nastere"    },
+  { name: "Aniversare"        , value: "aniversare"     },
+  { name: "Craciun"           , value: "craciun"        },
+  { name: "Paste"             , value: "paste"          },
+  { name: "Dragobete"         , value: "dragobete"      },
+  { name: "Cadou De Casa Noua", value: "cadou_de_casa_noua"},
+  { name: "Altceva"           , value: "altceva"        }
+]
+const imgHumanList = {
+  barbat: { "mai_mic_18": man18, "18_25": man1825, "26_35": man2635, "36_45": man3645, "46_60": man4660, "60_plus": man60},
+  femeie: { "mai_mic_18": woman18, "18_25": woman1825, "26_35": woman2635, "36_45": woman3645, "46_60": woman4660, "60_plus": woman60}
+}
+
+const imgRelationshipList = {
+  tata: tata,       mama: mama,
+  bunic: bunic,     bunica: bunica,
+  fiu: fiu,         fiica: fiica,
+  frate: frate,     sora: sora,
+  iubit: iubit,     iubita: iubita,
+  prieten: prieten, prietena: prietena,
+  socru: socru,     soacra: soacra,
+  sot: sot,         sotie: sotie,
+  altceva: altceva
+}
+
+const imgOccasionList = {
+  zi_de_nastere : zi_de_nastere,
+  aniversare : aniversare,
+  craciun : craciun,
+  paste: paste,
+  dragobete: dragobete,
+  cadou_de_casa_noua : cadou_de_casa_noua,
+  altceva : altceva
+}
+
+const typeList = [
+  { name: "Clasic"   , value: "clasic_type"   },
+  { name: "Amuzant"  , value: "amuzant_type"  },
+  { name: "Romantic" , value: "romantic_type" },
+  { name: "Practic"  , value: "practic_type"  },
+  { name: "Excentric", value: "excentric_type"},
+  { name: "Donatie"  , value: "donatie_type"  },
+  { name: "Handmade" , value: "handmade_type" },
+]
+
+const characteristicsList = [
+  { name: "Sportiv"   , value: "sportiv_ch"    },
+  { name: "Sedentar"  , value: "sedentar_ch"   },
+  { name: "Amuzant"   , value: "amuzant_ch"    },
+  { name: "Serios"    , value: "serios_ch"     },
+  { name: "Altruist"  , value: "altruist_ch"   },
+  { name: "Egoist"    , value: "egoist_ch"     },
+  { name: "Copilaros" , value: "copilaros_ch"  },
+  { name: "Matur"     , value: "matur_ch"      },
+  { name: "Spontan"   , value: "spontan_ch"    },
+  { name: "Romantic"  , value: "romantic_ch"   },
+  { name: "Incapatan" , value: "incapatan_ch"  },
+  { name: "Nebunatic" , value: "nebunatic_ch"  },
+  { name: "Energic"   , value: "energic_ch"    }
+]
+
+const interestsList = [
+  { name: "Animale"                  , value: "animale"                   },
+  { name: "Filme si Seriale"         , value: "filme_si_seriale"          },
+  { name: "Carti"                    , value: "carti"                     },
+  { name: "Sporturi"                 , value: "sporturi"                  },
+  { name: "Plante si natura"         , value: "plante_si_natura"          },
+  { name: "Istorie"                  , value: "istorie"                   },
+  { name: "Muzica"                   , value: "muzica"                    },
+  { name: "Arta"                     , value: "arta"                      },
+  { name: "Gatit"                    , value: "gatit"                     },
+  { name: "Cosmetice"                , value: "cosmetice"                 },
+  { name: "Moda"                     , value: "moda"                      },
+  { name: "Boardgames and Puzzles"   , value: "boardgames_and_puzzles"    },
+  { name: "Decoratiuni Interioare"   , value: "decoratiuni_interioare"    },
+  { name: "Tehnologie"               , value: "tehnologie"                },
+  { name: "Jucarii"                  , value: "jucarii"                   },
+  { name: "Fotografie si Filmografie", value: "fotografie_si_filmografie" }
+]
+
+const budgetList = [
+  { name: "Sub 100 lei"  , value: "mai_mic_100"},
+  { name: "100-200 lei"  , value: "100_200"    },
+  { name: "200-300 lei"  , value: "200_300"    },
+  { name: "Peste 300 lei", value: "300_plus"   }
+]
+
+const progress = [1, 2, 3, 4, 5, 6, 7]
+
 class Quiz extends React.Component {
 
   constructor(props) {
@@ -114,10 +228,6 @@ class Quiz extends React.Component {
       chosenGiftCharacteristics: [],
       chosenInterests: [],
       chosenBudget: "",
-      image1: null,
-      image2: null,
-      image3: null,
-      value1: ""
     };
     this.onChangeValue = this.onChangeValue.bind(this);
     this.onChangeValue2 = this.onChangeValue2.bind(this);
@@ -132,21 +242,26 @@ class Quiz extends React.Component {
   onChangeValue(event) {
     this.state.chosenSex = event.target.value;
     console.log(event.target.value);
+    console.log(this.state.chosenSex);
+    this.forceUpdate()
   }
 
   onChangeValue2(event) {
     this.state.chosenAge = event.target.value;
     console.log(event.target.value);
+    this.forceUpdate()
   }
 
   onChangeValue3(event) {
     this.state.chosenRelationship = event.target.value;
     console.log(event.target.value);
+    this.forceUpdate()
   }
 
   onChangeValue4(event) {
     this.state.chosenOccasion = event.target.value;
     console.log(event.target.value);
+    this.forceUpdate()
   }
 
   onChangeValue5(event) {
@@ -159,6 +274,7 @@ class Quiz extends React.Component {
         alreadyContainsThisType = true;
         aux = i;
       }
+
     }
 
     if(alreadyContainsThisType == false) {
@@ -173,6 +289,7 @@ class Quiz extends React.Component {
       this.state.chosenGiftType=data;
       console.log(this.state.chosenGiftType);
     }
+    this.forceUpdate()
   }
 
   onChangeValue6(event) {
@@ -198,6 +315,7 @@ class Quiz extends React.Component {
       this.state.chosenGiftCharacteristics=data;
       console.log(this.state.chosenGiftCharacteristics);
     }
+    this.forceUpdate()
   }
 
   onChangeValue7(event) {
@@ -224,11 +342,13 @@ class Quiz extends React.Component {
       this.state.chosenInterests=data;
       console.log(this.state.chosenInterests);
     }
+    this.forceUpdate()
   }
 
   onChangeValue8(event) {
     this.state.chosenBudget = event.target.value;
     console.log(event.target.value);
+    this.forceUpdate()
   }
 
   getValue=(e)=> {
@@ -238,547 +358,368 @@ class Quiz extends React.Component {
     console.log(this.state.chosenGiftType);
   }
 
-  toggle = () => {
-    this.setState({ displayQuestion1: true,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false});
-  };
-
-  toggle2 = () => {
-    this.setState({displayQuestion1: false,
-                    displayQuestion2: true,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false });
-  };
-
-  toggle3 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: true,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false });
-  };
-
-  toggle4 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: true,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false });
-  };
-
-  toggle5 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: true,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false });
-  };
-
-  toggle6 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: true,
-                    displayQuestion7: false,
-                    displayQuestion8: false });
-  };
-
-  toggle7 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: true,
-                    displayQuestion8: false });
-  };
-
-  toggle8 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: true });
-  };
-
-  toggle9 = () => {
-    this.setState({ displayQuestion1: false,
-                    displayQuestion2: false,
-                    displayQuestion3: false,
-                    displayQuestion4: false,
-                    displayQuestion5: false,
-                    displayQuestion6: false,
-                    displayQuestion7: false,
-                    displayQuestion8: false,
-                    finishQuiz: true });
+  toggle = (nameHide, nameShow) => {
+    this.setState({...this.state, [nameShow]: true, [nameHide]: false });
   };
 
   hideAll = () => {
+
     this.setState({ displayQuestion1: false, displayQuestion2: false });
   };
 
+  getProgress = () => {
+    var x = 0
+    if (this.state.displayQuestion1 == true)
+      x = 1
+    else if (this.state.displayQuestion2 == true)
+      x = 2
+    else if (this.state.displayQuestion3 == true)
+      x = 3
+    else if (this.state.displayQuestion4 == true)
+      x = 4
+    else if (this.state.displayQuestion5 == true)
+      x = 5
+    else if (this.state.displayQuestion6 == true)
+      x = 6
+    else if (this.state.displayQuestion7 == true)
+      x = 7
+    else if (this.state.displayQuestion8 == true || this.state.finishQuiz == true)
+      x = 8
+    console.log(`x is ${x}`)
+    return x
+  }
+
+  savedValue = (field, value) => {
+    var exists = false
+    if (field == "chosenInterests" || field == "chosenGiftType" || field == "chosenGiftCharacteristics") {
+      exists = this.state.[field].find( e => {return value == e})
+    }
+    else {
+      exists = this.state.[field] == value
+    }
+    console.log ("saved function")
+    console.log (field)
+    console.log(value)
+    console.log(exists)
+    return exists
+  }
+
+  submit = () => {
+    var payload = {
+      price: this.state.chosenBudget,
+      tags: [
+        this.state.chosenSex,
+        this.state.chosenAge,
+        this.state.chosenRelationship,
+        this.state.chosenOccasion,
+        ...this.state.chosenGiftType,
+        ...this.state.chosenInterests,
+        ...this.state.chosenGiftCharacteristics
+      ]
+    }
+    console.log(payload);
+    axios.post(`http://us-central1-gifter-51063.cloudfunctions.net/app/filter`, payload)
+      .then( res => this.handleSuccessfulPost(res))
+      .catch( err => this.handleError(err))
+  }
+
+  handleError = (err) => {
+    console.log(err)
+    alert(err.response.data.error)
+  }
+  handleSuccessfulPost = (res) => {
+    console.log(res.status)
+    console.log(res)
+    alert('Successful post!')
+  }
   render() {
     return (
       <div className="Quiz">
         <ResponsiveContainer>
           {/* <Segment id='seg1' style={{ padding: '2em 0em'}} vertical> */}
-            <header className="Quiz-header">
-              {this.state.displayQuestion1 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti sexul persoanei pentru care cautati cadou: </p>
-              <div onChange={this.onChangeValue}>
-                <input type="radio" value="Male" name="gender" style={{marginRight: "5px"}} />
-                <label>Barbat</label>
-                <br/>
-                <input type="radio" value="Female" name="gender" style={{marginRight: "5px"}} />
-                <label>Femeie</label>
-              </div>
-              <Button onClick={this.toggle2}>Continua</Button>
-              </div> : null}
+          <Segment id='seg1' style={{ padding: '2em 0em'}} vertical>
+            <div id="quiz-content">
+              <Grid container stackable>
 
-              {this.state.displayQuestion2 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti categoria de varsta a persoanei pentru care cautati cadou: </p>
-              <div onChange={this.onChangeValue2}>
-                <input type="radio" value="18" name="gender" style={{marginRight: "5px"}}/>
-                <label>Sub 18 ani</label>
-                <br/>
-                <input type="radio" value="18-25" name="gender" style={{marginRight: "5px"}}/>
-                <label>18-25 ani</label>
-                <br/>
-                <input type="radio" value="26-35" name="gender" style={{marginRight: "5px"}}/>
-                <label>26-35 ani</label>
-                <br/>
-                <input type="radio" value="36-45" name="gender" style={{marginRight: "5px"}}/>
-                <label>36-45 ani</label>
-                <br/>
-                <input type="radio" value="46-60" name="gender" style={{marginRight: "5px"}}/>
-                <label>46-60 ani</label>
-                <br/>
-                <input type="radio" value="60" name="gender" style={{marginRight: "5px"}}/>
-                <label>Peste 60 ani</label>
-                <br/>
-              </div>
-              <Button onClick={this.toggle3}>Continua</Button>
-              </div> : null}
+                <Grid.Row centered>
+                  <div id="quiz-progress-div">
+                    { progress.map((e) =>
+                      <React.Fragment>
+                        <div className={(this.getProgress() >= e ? "level-compleated" : null) + " level-round-div"} >
+                          <p className="level-p"> {e} </p>
+                        </div>
+                        <div className={(this.getProgress() > e  ? "level-compleated" : null) + " line"}>
+                        </div>
+                      </React.Fragment>
+                      )}
+                    <div className={(this.getProgress() == 8 ? "level-compleated" : null) + " level-round-div"} >
+                      <p className="level-p"> 8 </p>
+                    </div>
+                  </div>
+                </Grid.Row>
 
-              {this.state.displayQuestion3 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti relatia pe care o aveti nu persoana pentru care cautati cadoul: </p>
-              {this.state.chosenSex == "Male" ? (
-                <div onChange={this.onChangeValue3}>
-                  <input type="radio" value="Tata" name="gender" /> Tata
-                  <br/>
-                  <input type="radio" value="Bunic" name="gender" /> Bunic
-                  <br/>
-                  <input type="radio" value="Fiu" name="gender" /> Fiu
-                  <br/>
-                  <input type="radio" value="Frate" name="gender" /> Frate
-                  <br/>
-                  <input type="radio" value="Prieten" name="gender" /> Prieten
-                  <br/>
-                  <input type="radio" value="Iubit" name="gender" /> Iubit
-                  <br/>
-                  <input type="radio" value="Sot" name="gender" /> Sot
-                  <br/>
-                  <input type="radio" value="Socru" name="gender" /> Socru
-                </div> ) : ( <div onChange={this.onChangeValue3}>
-                  <input type="radio" value="Mama" name="gender" /> Mama
-                  <br/>
-                  <input type="radio" value="Bunica" name="gender" /> Bunica
-                  <br/>
-                  <input type="radio" value="Fiica" name="gender" /> Fiica
-                  <br/>
-                  <input type="radio" value="Sora" name="gender" /> Sora
-                  <br/>
-                  <input type="radio" value="Prietena" name="gender" /> Prietena
-                  <br/>
-                  <input type="radio" value="Iubita" name="gender" /> Iubita
-                  <br/>
-                  <input type="radio" value="Sotie" name="gender" /> Sotie
-                  <br/>
-                  <input type="radio" value="Soacra" name="gender" /> Soacra
-                  <br/>
-                  <input type="radio" value="Altceva" name="gender" /> Altceva
-                </div> )}
-              <Button onClick={this.toggle4}>Continua</Button>
-              <br/>
-              {/* {this.state.chosenSex == "Male" && this.state.chosenAge == "18" ? (
-                <img src={man18} height="600px"/>
-              ) : null} */}
-              {this.state.chosenSex == "Male" && this.state.chosenAge == "18" ? (
-                this.state.image1 = <img src={man18} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Male" && this.state.chosenAge == "18-25" ? (
-                this.state.image1 = <img src={man1825} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Male" && this.state.chosenAge == "26-35" ? (
-                this.state.image1 = <img src={man2635} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Male" && this.state.chosenAge == "36-45" ? (
-                this.state.image1 = <img src={man3645} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Male" && this.state.chosenAge == "46-60" ? (
-                this.state.image1 = <img src={man4660} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Male" && this.state.chosenAge == "60" ? (
-                this.state.image1 = <img src={man60} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "18" ? (
-                this.state.image1 = <img src={woman18} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "18-25" ? (
-                this.state.image1 = <img src={woman1825} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "26-35" ? (
-                this.state.image1 = <img src={woman2635} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "36-45" ? (
-                this.state.image1 = <img src={woman3645} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "46-60" ? (
-                this.state.image1 = <img src={woman4660} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : this.state.chosenSex == "Female" && this.state.chosenAge == "60" ? (
-                this.state.image1 = <img src={woman60} style={{height:"600px", marginLeft:"28%", marginTop:"-10%"}}/>
-              ) : null}
-              </div> : null}
+                <Grid.Row columns={3}>
+                  {/* quiz column*/}
+                  <Grid.Column width={5}>
+                    {/* choose sex*/}
+                    {this.state.displayQuestion1 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <p className="question-text-p"> Alegeti sexul persoanei pentru care cautati cadou: </p>
+                      <div className="question-item" onChange={this.onChangeValue}>
+                        <input type="radio" value="barbat" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex" ,"barbat")} onChange={this.onChangeValue} className="radio"/>
+                        <label>Barbat</label>
+                        <br/>
+                        <input type="radio" value="femeie" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex","femeie")} className="radio"/>
+                        <label>Femeie</label>
+                      </div>
+                      <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">Continua</Button>
+                    </div> : null}
 
-              {this.state.displayQuestion4 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti ocazia pentru care oferiti cadoul: </p>
-              <div onChange={this.onChangeValue4}>
-                <input type="radio" value="ZiDeNastere" name="gender" /> Zi de nastere
-                <br/>
-                <input type="radio" value="Aniversare" name="gender" /> Aniversare
-                <br/>
-                <input type="radio" value="Craciun" name="gender" /> Craciun
-                <br/>
-                <input type="radio" value="Paste" name="gender" /> Paste
-                <br/>
-                <input type="radio" value="Dragobete" name="gender" /> Dragobete
-                <br/>
-                <input type="radio" value="CadouDeCasaNoua" name="gender" /> Cadou de casa noua
-                <br/>
-                <input type="radio" value="Altceva" name="gender" /> Altceva
-              </div>
-              <Button onClick={this.toggle5}>Continua</Button>
-              {this.state.chosenRelationship == "Tata" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={tata} height="600px" left="500px"/>}</div>
-              </div>
-              ) : this.state.chosenRelationship == "Mama" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={mama} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Bunic" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={bunic} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Bunica" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={bunica} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Fiica" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={fiica} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Fiu" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={fiu} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Frate" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={fiu} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Sora" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={sora} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Iubit" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={iubit} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Iubita" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={iubita} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Prieten" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={prieten} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Prietena" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={prietena} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Soacra" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={soacra} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Socru" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={socru} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Sot" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={sot} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Sotie" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={sotie} height="600px" left="500px"/>}</div>
-                </div>
-              ) : this.state.chosenRelationship == "Altceva" ? (
-                <div style={{marginLeft:"28%", marginTop:"-10%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image2 = <img src={altceva} height="600px" left="500px"/>}</div>
-                </div>
-              ) : null }
-              </div> : null}
+                    {/* choose age*/}
+                    {this.state.displayQuestion2 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion1")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion3")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti categoria de varsta a persoanei pentru care cautati cadou: </p>
+                      <div className="question-item" onChange={this.onChangeValue2}>
+                        {ageList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()} >
+                            <input type="radio" value={elem.value} name="age" style={{marginRight: "5px"}} checked={this.savedValue("chosenAge",elem.value)} className="radio"/>
+                            <label> {elem.name} </label>
+                            <br/>
+                          </React.Fragment>
+                         )}
+                      </div>
+                    </div> : null}
 
-              {this.state.displayQuestion5 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti tipul de cadou dorit: </p>
-              <div>
-                <Checkbox color="primary" value="Clasic" onChange={this.onChangeValue5} /> Clasic
-                <br/>
-                <Checkbox color="primary" value="Amuzant" onChange={this.onChangeValue5} /> Amuzant
-                <br/>
-                <Checkbox color="primary" value="Romantic" onChange={this.onChangeValue5} /> Romantic
-                <br/>
-                <Checkbox color="primary" value="Practic" onChange={this.onChangeValue5} /> Practic
-                <br/>
-                <Checkbox color="primary" value="Excentric" onChange={this.onChangeValue5} /> Excentric
-                <br/>
-                <Checkbox color="primary" value="Donatie" onChange={this.onChangeValue5} /> Donatie
-                <br/>
-                <Checkbox color="primary" value="Handmade" onChange={this.onChangeValue5} /> Handmade
-                <br/>
-              </div>
-              {/* <div onChange={this.onChangeValue5}>
-                <input type="radio" value="Clasic" name="gender" /> Clasic
-                <br/>
-                <input type="radio" value="Amuzant" name="gender" /> Amuzant
-                <br/>
-                <input type="radio" value="Romantic" name="gender" /> Romantic
-                <br/>
-                <input type="radio" value="Practic" name="gender" /> Practic
-                <br/>
-                <input type="radio" value="Excentric" name="gender" /> Excentric
-                <br/>
-                <input type="radio" value="Donatie" name="gender" /> Donatie
-                <br/>
-                <input type="radio" value="Handmade" name="gender" /> Handmade
-              </div> */}
-              <Button onClick={this.toggle6}>Continua</Button>
-              {this.state.chosenOccasion == "ZiDeNastere" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={ziNastere} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "Aniversare" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={aniversare} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "Craciun" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"0px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={Craciun} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "Paste" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={Paste} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "Dragobete" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={dragobete} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "CadouDeCasaNoua" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={cadouCasaNoua} width="600px"/>}</div>
-                </div>
-              ) : this.state.chosenOccasion == "Altceva" ? (
-                <div style={{marginLeft:"28%", marginTop:"-20%"}}>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center"}}>{this.state.image3 = <img src={cadouCasaNoua} width="600px"/>}</div>
-                </div>
-              ) : null}
-              </div> : null}
+                    {/* choose relationship*/}
+                    {this.state.displayQuestion3 ?
+                      <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion2")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion4")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti relatia pe care o aveti nu persoana pentru care cautati cadoul: </p>
+                      {this.state.chosenSex == "barbat" ? (
+                        <div className="question-item" onChange={this.onChangeValue3}>
+                          {barbatRoleList.map((elem) =>
+                            <React.Fragment key={elem.value.toString()}>
+                              <input type="radio" value={elem.value} name="role" checked={this.savedValue("chosenRelationship",elem.value)} className="radio"/> {elem.name}
+                              <br/>
+                            </React.Fragment>
+                          )}
+                        </div> ) : ( <div className="question-item"onChange={this.onChangeValue3}>
+                          {femeieRoleList.map((elem) =>
+                            <React.Fragment key={elem.value.toString()}>
+                              <input type="radio" value={elem.value} name="role" checked={this.savedValue("chosenRelationship",elem.value)} className="radio"/> {elem.name}
+                              <br/>
+                            </React.Fragment>
+                          )}
+                        </div> )}
+                    </div> : null}
 
-              {this.state.displayQuestion6 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti caracteristicile cadoului dorit: </p>
-              <div>
-                <Checkbox color="primary" value="Sportiv" onChange={this.onChangeValue6} /> Sportiv
-                <br/>
-                <Checkbox color="primary" value="Sedentar" onChange={this.onChangeValue6} /> Sedentar
-                <br/>
-                <Checkbox color="primary" value="Amuzant" onChange={this.onChangeValue6} /> Amuzant
-                <br/>
-                <Checkbox color="primary" value="Serios" onChange={this.onChangeValue6} /> Serios
-                <br/>
-                <Checkbox color="primary" value="Altruist" onChange={this.onChangeValue6} /> Altruist
-                <br/>
-                <Checkbox color="primary" value="Egoist" onChange={this.onChangeValue6} /> Egoist
-                <br/>
-                <Checkbox color="primary" value="Copilaros" onChange={this.onChangeValue6} /> Copilaros
-                <br/>
-                <Checkbox color="primary" value="Matur" onChange={this.onChangeValue6} /> Matur
-                <br/>
-                <Checkbox color="primary" value="Spontan" onChange={this.onChangeValue6} /> Spontan
-                <br/>
-                <Checkbox color="primary" value="Romantic" onChange={this.onChangeValue6} /> Romantic
-                <br/>
-                <Checkbox color="primary" value="Incapatanat" onChange={this.onChangeValue6} /> Incapatanat
-                <br/>
-                <Checkbox color="primary" value="Nebunatic" onChange={this.onChangeValue6} /> Nebunatic
-                <br/>
-                <Checkbox color="primary" value="Energic" onChange={this.onChangeValue6} /> Energic
-                <br/>
-              </div>
-              <Button onClick={this.toggle7}>Continua</Button>
-              <div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image3}</div>
-              </div>
-              </div> : null}
+                    {/* choose occasion*/}
+                    {this.state.displayQuestion4 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion3")}} id="back-btn">Back</Button>
+                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion5")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti ocazia pentru care oferiti cadoul: </p>
+                      <div className="question-item" onChange={this.onChangeValue4}>
+                        {occasionList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()}>
+                            <input type="radio" value={elem.value} name="ocasion" checked={this.savedValue("chosenOccasion",elem.value)} className="radio"/> {elem.name}
+                            <br/>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div> : null}
 
-              {this.state.displayQuestion7 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti interesele persoanei: </p>
-              <div>
-                <Checkbox color="primary" value="Animale" onChange={this.onChangeValue7} /> Animale
-                <br/>
-                <Checkbox color="primary" value="FilmeSiSeriale" onChange={this.onChangeValue7} /> Filme si seriale
-                <br/>
-                <Checkbox color="primary" value="Carti" onChange={this.onChangeValue7} /> Carti
-                <br/>
-                <Checkbox color="primary" value="Sporturi" onChange={this.onChangeValue7} /> Sporturi
-                <br/>
-                <Checkbox color="primary" value="Plante si natura" onChange={this.onChangeValue7} /> Plante si natura
-                <br/>
-                <Checkbox color="primary" value="Istorie" onChange={this.onChangeValue7} /> Istorie
-                <br/>
-                <Checkbox color="primary" value="Muzica" onChange={this.onChangeValue7} /> Muzica
-                <br/>
-                <Checkbox color="primary" value="Arta" onChange={this.onChangeValue7} /> Arta
-                <br/>
-                <Checkbox color="primary" value="Gatit" onChange={this.onChangeValue7} /> Gatit
-                <br/>
-                <Checkbox color="primary" value="Cosmetice" onChange={this.onChangeValue7} /> Cosmetice
-                <br/>
-                <Checkbox color="primary" value="Moda" onChange={this.onChangeValue7} /> Moda
-                <br/>
-                <Checkbox color="primary" value="BoardgamesAndPuzzles" onChange={this.onChangeValue7} /> Boardgames and puzzles
-                <br/>
-                <Checkbox color="primary" value="DecoratiuniInterioare" onChange={this.onChangeValue7} /> Decoratiuni interioare
-                <br/>
-                <Checkbox color="primary" value="Tehnologie" onChange={this.onChangeValue7} /> Tehnologie
-                <br/>
-                <Checkbox color="primary" value="Jucarii" onChange={this.onChangeValue7} /> Jucarii
-                <br/>
-                <Checkbox color="primary" value="FotografieSiFilmografie" onChange={this.onChangeValue7} /> Fotografie si filmografie
-                <br/>
-              </div>
-              <Button onClick={this.toggle8}>Continua</Button>
-              <div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image3}</div>
-              </div>
-              </div> : null}
+                    {/* choose present type*/}
+                    {this.state.displayQuestion5 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion4")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion6")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti tipul de cadou dorit: </p>
+                      <div className="question-item">
+                        {typeList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()}>
+                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue5} checked={this.savedValue("chosenGiftType",elem.value)}/> {elem.name}
+                            <br/>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div> : null}
 
-              {this.state.displayQuestion8 ? 
-              <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-              <p> Alegeti bugetul pentru cadoul dorit: </p>
-              <div onChange={this.onChangeValue8}>
-                <input type="radio" value="100" name="gender" /> Sub 100 lei
-                <br/>
-                <input type="radio" value="100-200" name="gender" /> 100-200 lei
-                <br/>
-                <input type="radio" value="200-300" name="gender" /> 200-300 lei
-                <br/>
-                <input type="radio" value="300" name="gender" /> Peste 300
-                <br/>
-              </div>
-              <Button onClick={this.toggle9}>Continua</Button>
-              <div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"600px", width:"2px"}}>{this.state.image1}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px", width:"8px"}}>{this.state.image2}</div>
-                  <div style={{display: "inline-block", alignItems: "center", height:"750px"}}>{this.state.image3}</div>
-              </div>
-              </div> : null}
+                    {/* choose present characteristics*/}
+                    {this.state.displayQuestion6 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion5")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion7")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti caracteristicile cadoului dorit: </p>
+                      <div className="question-item">
+                        {characteristicsList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()}>
+                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue6} checked={this.savedValue("chosenGiftCharacteristics",elem.value)}/> {elem.name}
+                            <br/>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div> : null}
 
-              {this.state.finishQuiz ? 
-              <div>
-              <p> Great! </p>
-              </div> : null}
-            </header>
-          {/* </Segment> */}
+                    {/* choose person interests*/}
+                    {this.state.displayQuestion7 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion6")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion8")}} id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti interesele persoanei: </p>
+                      <div className="question-item">
+                        {interestsList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()}>
+                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue7} checked={this.savedValue("chosenInterests",elem.value)}/> {elem.name}
+                            <br/>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div> : null}
+
+                    {/* choose budget*/}
+                    {this.state.displayQuestion8 ?
+                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion8","displayQuestion7")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion8","finishQuiz")}}       id="continua-btn">Continua</Button>
+                      <p className="question-text-p"> Alegeti bugetul pentru cadoul dorit: </p>
+                      <div className="question-item">
+                        {budgetList.map((elem) =>
+                          <React.Fragment key={elem.value.toString()}>
+                            <input type="radio" value={elem.value} name="gender" onChange={this.onChangeValue8} className="radio" checked={this.savedValue("chosenBudget", elem.value)}/> {elem.name}
+                            <br/>
+                          </React.Fragment>
+                      )}
+                      </div>
+                    </div> : null}
+
+                    {this.state.finishQuiz ?
+                    <div>
+                      <p id="great-p"> Great! </p>
+                      <Button onClick={(e) => {this.toggle("finishQuiz","displayQuestion8")}} id="back-btn">Back</Button>
+                      <Button onClick={(e) => {this.submit()}}       id="continua-btn">Finish quiz</Button>
+                    </div> : null}
+                  </Grid.Column>
+
+                  <Grid.Column id="quiz-img-column" width={7} floated="left">
+                    {/* images */}
+                      {this.state.chosenRelationship ?
+                        <Image src={imgRelationshipList.[this.state.chosenRelationship]} id="quiz-img"/>
+                      : null}
+                      {this.state.chosenSex && this.state.chosenAge ?
+                        <Image src={imgHumanList.[this.state.chosenSex][this.state.chosenAge]} id="quiz-img" />
+                      : null}
+                      {this.state.chosenOccasion ?
+                        <Image src={imgOccasionList.[this.state.chosenOccasion]} id="quiz-img"/>
+                      : null}
+                  </Grid.Column>
+
+                  <Grid.Column id="selected-bubbles-column" width={4}>
+                  {/* selected-bubbles on the right of the screen */}
+                    <div className="selected-bubbles-div">
+
+                      <Grid.Row>
+                      {this.state.chosenSex?
+                        <div className="buble-div b1"> <p className="buble-p"> {this.state.chosenSex == 'femeie'? "Femeie" : "Barbat"} </p>  </div>
+                      : null}
+
+                      {this.state.chosenAge?
+                        <div className="buble-div b2">
+                          <p className="buble-p">
+                            {ageList.find( e => {return e.value == this.state.chosenAge}).name}
+                          </p>
+                        </div>
+                      : null}
+
+                      {this.state.chosenRelationship?
+                        <div className="buble-div b3">
+                          <p className="buble-p">
+                            {this.state.chosenSex == "femeie"?
+                            femeieRoleList.find( e => {return e.value == this.state.chosenRelationship}).name
+                            : barbatRoleList.find( e => {return e.value == this.state.chosenRelationship}).name}
+                          </p>
+                        </div>
+                      : null}
+
+                      {this.state.chosenOccasion?
+                        <div className="buble-div b4">
+                          <p className="buble-p">
+                            {occasionList.find( e => {return e.value == this.state.chosenOccasion}).name}
+                          </p>
+                        </div>
+                      : null}
+
+                      {this.state.chosenBudget?
+                        <div className="buble-div b1">
+                          <p className="buble-p">
+                            {budgetList.find( e => {return e.value == this.state.chosenBudget}).name}
+                          </p>
+                        </div>
+                      : null}
+                      </Grid.Row>
+
+                      <Grid.Row>
+                      {this.state.chosenGiftType.length != 0 ?
+                        <p class="small-label"> Tip cadou: </p>
+                       : null
+                      }
+                      {this.state.chosenGiftType.length != 0 ? (
+                        this.state.chosenGiftType.map ( (type) =>
+                          <div className="buble-div b5">
+                            <p className="buble-p">
+                              { typeList.find( e => {return e.value == type }).name}
+                            </p>
+                          </div>
+                        )
+                      )
+                      : null}
+                      </Grid.Row>
+
+                      <Grid.Row>
+                      {this.state.chosenGiftCharacteristics.length != 0 ?
+                        <p class="small-label"> Characteristici cadou: </p>
+                       : null
+                      }
+                      {this.state.chosenGiftCharacteristics.length != 0?
+                        this.state.chosenGiftCharacteristics.map ( (type) =>
+                          <div className="buble-div b1">
+                            <p className="buble-p">
+                              { characteristicsList.find( e => {console.log(type); return e.value == type }).name}
+                            </p>
+                          </div>
+                        )
+                      : null}
+                      </Grid.Row>
+
+                      <Grid.Row>
+                      {this.state.chosenInterests.length != 0 ?
+                        <p class="small-label"> Interese: </p>
+                       : null
+                      }
+                      {this.state.chosenInterests.length != 0?
+                        this.state.chosenInterests.map ( (type) =>
+                          <div className="buble-div b2">
+                            <p className="buble-p">
+                              { interestsList.find( e => {return e.value == type }).name}
+                            </p>
+                          </div>
+                        )
+                      : null}
+                      </Grid.Row>
+                    </div>
+
+                  </Grid.Column>
+                </Grid.Row>
+             </Grid>
+             </div>
+          </Segment>
         </ResponsiveContainer>
       </div>
     );
   }
 }
-
-// function Quiz() {
-//   return (
-//     <div className="Quiz">
-//       <ResponsiveContainer>
-//         <Segment id='seg1' style={{ padding: '0em 0em'}} vertical>
-//           <header className="Quiz-header">
-//             <p> Quiz page </p>
-//             <p> Quiz page </p>
-//             <p> Quiz page </p>
-//             <p> Quiz page </p>
-//             <p> Quiz page </p>
-//             <Button>Continua</Button>
-//           </header>
-//         </Segment>
-//       </ResponsiveContainer>
-//     </div>
-//   );
-// }
 
 export default Quiz;
