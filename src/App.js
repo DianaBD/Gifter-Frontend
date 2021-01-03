@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import './styles/App.css';
 import { HashRouter, Switch, Route, Link, Redirect } from 'react-router-dom'
 import Home from './components/Home'
+import About from './components/About'
 import Quiz from './components/Quiz'
 import React, { Component, useState } from 'react'
 import {
@@ -37,6 +38,7 @@ function App() {
         <Switch>
           <Route exact path={"/"}> <Redirect to="/home" /> </Route>
           <Route exact path={"/home"} component={Home}></Route>
+          <Route exact path={"/about"} component={About}></Route>
           <Route path={"/quiz"} component={Quiz}/>
         </Switch>
       </HashRouter>

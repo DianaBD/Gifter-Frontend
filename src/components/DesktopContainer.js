@@ -90,12 +90,17 @@ class DesktopContainer extends Component {
                  <div id="menu-btn-div">
                     <Link to='/home'>
                       <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                      ABOUT
+                      HOME
                       </Button>
                     </Link>
                     <Link to='/quiz'>
                       <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
                       TAKE QUIZ
+                      </Button>
+                    </Link>
+                    <Link to='/about'>
+                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                      ABOUT US
                       </Button>
                     </Link>
                   </div>

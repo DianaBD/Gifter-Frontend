@@ -7,7 +7,8 @@ import React from 'react'
 
 import {
     Grid,
-    Image
+    Image,
+    Segment
 } from 'semantic-ui-react'
 
 const { MediaContextProvider } = createMedia({
@@ -44,7 +45,7 @@ function About() {
     return (
         <div className="About">
             <ResponsiveContainer>
-                {/*<Segment id='seg5'>*/}
+               <Segment id='seg1' style={{ padding: '2em 0em'}} vertical>
                 {/*    <Grid divided inverted stackable>*/}
                 <div className="text-center">
                     <p className="text-muted2">There are souls in this world who have the gift of finding joy everywhere,
@@ -59,7 +60,9 @@ function About() {
                             <Grid.Column width={5}>
                                 <div className="row text-center">
                                     <div className="col-md-4">
-                                        <Image alt='sss' src={`/about1.png`} id="logo1"/>
+                                        <div>
+                                           <Image alt='sss' src={`/about1.png`} id="logo1" circular/>
+                                        </div>
                                         <h4 className="my-3" style={{ fontSize: '2em' }}>SAVE TIME</h4>
                                         <p className="text-muted">Find interesting ideas<br/>faster than you can say
                                             "gift".</p>
@@ -86,6 +89,7 @@ function About() {
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
+                </Segment>
             </ResponsiveContainer>
         </div>
     );
