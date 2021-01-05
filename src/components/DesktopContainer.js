@@ -18,6 +18,7 @@ import {
   Segment,
   Sidebar,
   Visibility,
+  Dropdown
 } from 'semantic-ui-react'
 
 const { MediaContextProvider, Media } = createMedia({
@@ -29,36 +30,66 @@ const { MediaContextProvider, Media } = createMedia({
 })
 
 class DesktopContainer extends Component {
-  state = {}
-
-  hideFixedMenu = () => this.setState({ fixed: false })
-  showFixedMenu = () => this.setState({ fixed: true })
-
-  state = {
-    calculations: {
-      direction: 'none',
+  constructor(props) {
+    super(props)
+    this.state = {
+      width: window.innerWidth,
       height: 0,
-      width: 0,
-      topPassed: false,
-      bottomPassed: false,
-      pixelsPassed: 0,
-      percentagePassed: 0,
-      topVisible: false,
-      bottomVisible: false,
-      fits: false,
-      passing: false,
-      onScreen: false,
-      offScreen: false,
-    },
+      fixed: false,
+      showMenu: false
+    }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    // this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
-  handleUpdate = (e, { calculations }) => this.setState({ calculations })
+  hideFixedMenu = () => this.setState({...this.state, fixed: false, showMenu: false })
+  showFixedMenu = () => this.setState({...this.state, fixed: true })
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    // document.addEventListener('mousedown', this.handleClickOutside);
+
+    this.hideFixedMenu();
+    if (this.state.height > 0) {
+      this.showFixedMenu();
+    }
+      // this.showFixedMenu();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    // document.removeEventListener('mousedown', this.handleClickOutside);
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    console.log(window.innerWidth)
+    this.setState({...this.state, width: window.innerWidth, height: window.innerHeight });
+  }
+
+  toggleMenu = () => {
+    console.log(this.state.showMenu)
+    this.setState({...this.state, showMenu: !this.state.showMenu, fixed: true})
+    console.log(this.state.showMenu)
+  }
+
+  // handleClickOutside(event) {
+  //   console.log("clickoutside")
+  //   if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+  //     alert('You clicked outside of me!');
+  //     this.setState({...this.state, showMenu: false });
+  //   }
+  //
+  // }
 
   render() {
     const { children } = this.props
     const { fixed } = this.state
+    const { width } = this.state
+    const {showMenu} = this.state
 
     return (
+
       <Media greaterThan='mobile'>
 
         <Visibility
@@ -76,34 +107,64 @@ class DesktopContainer extends Component {
               pointing={!fixed}
               size='large'
               id="menu"
-              className={fixed == true ? null : 'top'}
+              className={fixed == true ? (showMenu == true ? 'mini' : null) : 'top'}
             >
 
-              <Container id="menu-container" className={ fixed ? "vertical-center" : null}>
-                {/*<div id="logo-div">*/}
+              <Container id="menu-container" className="margin-top">
                 <Grid columns={2} id="menu-grid">
                 <Grid.Column floated='left'>
                   <Image alt='sss' src={`/logo_small.png`} size='small' id="logo" className={fixed? "shrinked" : "normal"} />
+                  { width < 800 && showMenu == true ?
+                    <div id="menu-left-div">
+                      <Link to='/home'>
+                        <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                        ACASA
+                        </Button>
+                      </Link>
+                      <Link to='/quiz'>
+                        <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                        QUIZ
+                        </Button>
+                      </Link>
+                      <Link to='/about'>
+                        <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                        DESPRE NOI
+                        </Button>
+                      </Link>
+                    </div>
+                    : null }
                 </Grid.Column>
                 {/*<div id="menu-btn-div">*/}
                 <Grid.Column floated='right'>
-                 <div id="menu-btn-div">
-                    <Link to='/home'>
-                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                      HOME
-                      </Button>
-                    </Link>
-                    <Link to='/quiz'>
-                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                      TAKE QUIZ
-                      </Button>
-                    </Link>
-                    <Link to='/about'>
-                      <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                      ABOUT US
-                      </Button>
-                    </Link>
-                  </div>
+                 { width > 800 ?
+                   <div id="menu-btn-div">
+                      <Link to='/home'>
+                        <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
+                        ACASA
+                        </Button>
+                      </Link>
+                      <Link to='/quiz'>
+                        <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
+                        QUIZ
+                        </Button>
+                      </Link>
+                      <Link to='/about'>
+                        <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
+                        DESPRE NOI
+                        </Button>
+                      </Link>
+                    </div>
+                  : (
+                    <React.Fragment>
+                        <Button animated='vertical' id="bars-menu-btn">
+                          <Button.Content hidden onClick={this.toggleMenu}> Menu</Button.Content>
+                          <Button.Content visible onClick={this.toggleMenu}>
+                            <Icon name='bars'/>
+                          </Button.Content>
+                        </Button>
+                    </React.Fragment>
+                    )
+                  }
                 </Grid.Column>
                 </Grid>
               </Container>
@@ -113,6 +174,15 @@ class DesktopContainer extends Component {
           </Segment>
         </Visibility>
         {children}
+        <Segment inverted vertical style={{ padding: '5em 0em' }}>
+          <Container>
+            <Grid divided inverted stackable centered>
+              <Grid.Row centered>
+                  <Header inverted as='h4' content='Copyright © Gifter 2020'/>
+              </Grid.Row>
+            </Grid>
+          </Container>
+        </Segment>
       </Media>
     )
   }

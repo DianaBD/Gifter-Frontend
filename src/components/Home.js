@@ -55,108 +55,43 @@ ResponsiveContainer.propTypes = {
   children: PropTypes.node,
 }
 
-function Home() {
-  return (
-    <div className="Home">
-      <ResponsiveContainer>
-        <Segment id='seg1'>
-          <HomepageHeading id="heading"/>
-        </Segment>
-        {/* <Segment id='seg2' style={{ padding: '0em 0em'}} vertical>
-          <Grid container stackable verticalAlign='middle'>
-            <Grid.Row>
-              <Grid.Column width={8}>
-                <Header as='h3' style={{ fontSize: '2em' }}>
-                  Ceva
-                </Header>
-                <p style={{ fontSize: '1.33em' }}>
-                  Ceva
-                </p>
-                <Header as='h3' style={{ fontSize: '2em' }}>
-                  Altceva
-                </Header>
-                <p style={{ fontSize: '1.33em' }}>
-                  Ceva
-                </p>
-              </Grid.Column>
-              <Grid.Column floated='right' width={6}>
+class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      width: 0,
+      height: 0
+    }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+  }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    document.addEventListener('mousedown', this.handleClickOutside);
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
 
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column textAlign='center'>
-                <Button size='huge'>Ceva</Button>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
 
-        <Segment id="seg3" style={{ padding: '8em 0em' }} vertical>
-          <Container text>
-            <Header as='h3' style={{ fontSize: '2em' }}>
-              Cevaa
-            </Header>
-            <p style={{ fontSize: '1.33em' }}>
-              Cevaaa
-            </p>
-            <Button as='a' size='large'>
-              Altbuton
-            </Button>
+  updateWindowDimensions() {
+    console.log(window.innerWidth)
+    this.setState({...this.state, width: window.innerWidth, height: window.innerHeight });
+  }
+  render () {
+    const { width } = this.state
 
-            <Divider
-              as='h4'
-              className='header'
-              horizontal
-              style={{ margin: '3em 0em', textTransform: 'uppercase' }}
-            >
-              <a href='#'>Case Studies</a>
-            </Divider>
-
-            <Header as='h3' style={{ fontSize: '2em' }}>
-              Altcevaaaaaa
-            </Header>
-            <p style={{ fontSize: '1.33em' }}>
-              Text mult
-            </p>
-            <Button as='a' size='large'>
-              I'm Still Quite Interested
-            </Button>
-          </Container>
-        </Segment> */}
-
-        <Segment inverted vertical style={{ padding: '5em 0em' }}>
-          <Container>
-            <Grid divided inverted stackable>
-              <Grid.Row>
-                <Grid.Column width={3}>
-                  <Header inverted as='h4' content='Copyright © Gifter 2020' />
-                 {/* <List link inverted>
-                    <List.Item as='a'>Contact Us</List.Item>
-                    <List.Item as='a'>Gifter stuff</List.Item>
-                  </List> */}
-                </Grid.Column>
-                {/* <Grid.Column width={3}>
-                  <Header inverted as='h4' content='Services' />
-                  <List link inverted>
-                    <List.Item as='a'>Banana Pre-Order</List.Item>
-                    <List.Item as='a'>Favorite X-Men</List.Item>
-                  </List>
-                </Grid.Column>
-                <Grid.Column width={7}>
-                  <Header as='h4' inverted>
-                    Footer Header
-                  </Header>
-                  <p>
-                    Extra space for a call to action inside the footer that could help re-engage users.
-                  </p>
-                </Grid.Column> */}
-              </Grid.Row>
-            </Grid>
-          </Container>
-        </Segment>
-      </ResponsiveContainer>
-    </div>
-  );
+    return (
+      <div className="Home">
+        <ResponsiveContainer>
+          <Segment id='seg1' style={{ padding: '2em 0em'}} vertical>
+            <HomepageHeading id="heading" width={width}/>
+          </Segment>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
 }
 // <Image bordered rounded size='large' src='/.png' />
 

@@ -43,6 +43,7 @@ import craciun from '../images/craciun.png';
 import paste from '../images/paste.png';
 import dragobete from '../images/dragobete.png';
 import zi_de_nastere from '../images/zi_nastere.png';
+import loading from '../images/loading.gif'
 import Checkbox from '@material-ui/core/Checkbox';
 
 import React, { Component, useState } from 'react'
@@ -61,7 +62,10 @@ import {
   Segment,
   Sidebar,
   Visibility,
-  Radio
+  Radio,
+  Card,
+  Progress,
+  Dropdown
 } from 'semantic-ui-react'
 
 const { MediaContextProvider, Media } = createMedia({
@@ -84,46 +88,48 @@ ResponsiveContainer.propTypes = {
 }
 
 const ageList = [
-  { name: "Sub 18 ani"  , value: "mai_mic_18"  },
-  { name: "18-25 ani"   , value: "18_25"},
-  { name: "26-35 ani"   , value: "26_35"},
-  { name: "36-45 ani"   , value: "36_45"},
-  { name: "46-60 ani"   , value: "46_60"},
-  { name: "Peste 60 ani", value: "60_plus"}
+  { text: "Sub 18 ani"  , value: "mai_mic_18"  },
+  { text: "18-25 ani"   , value: "18_25"},
+  { text: "26-35 ani"   , value: "26_35"},
+  { text: "36-45 ani"   , value: "36_45"},
+  { text: "46-60 ani"   , value: "46_60"},
+  { text: "Peste 60 ani", value: "60_plus"}
 ]
 
-const barbatRoleList = [
-  { name: "Tata"   , value: "tata"   },
-  { name: "Bunic"  , value: "bunic"  },
-  { name: "Fiu"    , value: "fiu"    },
-  { name: "Frate"  , value: "frate"  },
-  { name: "Prieten", value: "prieten"},
-  { name: "Iubit"  , value: "iubit"  },
-  { name: "Sot"    , value: "sot"    },
-  { name: "Socru"  , value: "socru"  },
-  { name: "Altceva", value: "altceva"}
-]
+const roleList = {
+  barbat: [
+    { key: "Tata"   , text: "Tata"   , value: "tata"   },
+    { key: "Bunic"  , text: "Bunic"  , value: "bunic"  },
+    { key: "Fiu"    , text: "Fiu"    , value: "fiu"    },
+    { key: "Frate"  , text: "Frate"  , value: "frate"  },
+    { key: "Prieten", text: "Prieten", value: "prieten"},
+    { key: "Iubit"  , text: "Iubit"  , value: "iubit"  },
+    { key: "Sot"    , text: "Sot"    , value: "sot"    },
+    { key: "Socru"  , text: "Socru"  , value: "socru"  },
+    { key: "Altceva", text: "Altceva", value: "altceva"}
+  ],
+  femeie:  [
+    { key: "Mama"    , text: "Mama"    ,  value: "mama"    },
+    { key: "Bunica"  , text: "Bunica"  ,  value: "bunica"  },
+    { key: "Fiica"   , text: "Fiica"   ,  value: "fiica"   },
+    { key: "Sora"    , text: "Sora"    ,  value: "sora"    },
+    { key: "Prietena", text: "Prietena",  value: "prietena"},
+    { key: "Iubita"  , text: "Iubita"  ,  value: "iubita"  },
+    { key: "Sotie"   , text: "Sotie"   ,  value: "sotie"   },
+    { key: "Soacra"  , text: "Soacra"  ,  value: "soacra"  },
+    { key: "Altceva" , text: "Altceva" ,  value: "altceva" }
+  ]
 
-const femeieRoleList = [
-  { name: "Mama"    ,  value: "mama"    },
-  { name: "Bunica"  ,  value: "bunica"  },
-  { name: "Fiica"   ,  value: "fiica"   },
-  { name: "Sora"    ,  value: "sora"    },
-  { name: "Prietena",  value: "prietena"},
-  { name: "Iubita"  ,  value: "iubita"  },
-  { name: "Sotie"   ,  value: "sotie"   },
-  { name: "Soacra"  ,  value: "soacra"  },
-  { name: "Altceva" ,  value: "altceva" }
-]
+}
 
 const occasionList = [
-  { name: "Zi De Nastere"     , value: "zi_de_nastere"    },
-  { name: "Aniversare"        , value: "aniversare"     },
-  { name: "Craciun"           , value: "craciun"        },
-  { name: "Paste"             , value: "paste"          },
-  { name: "Dragobete"         , value: "dragobete"      },
-  { name: "Cadou De Casa Noua", value: "cadou_de_casa_noua"},
-  { name: "Altceva"           , value: "altceva"        }
+  { text: "Zi De Nastere"     , value: "zi_de_nastere"    },
+  { text: "Aniversare"        , value: "aniversare"     },
+  { text: "Craciun"           , value: "craciun"        },
+  { text: "Paste"             , value: "paste"          },
+  { text: "Dragobete"         , value: "dragobete"      },
+  { text: "Cadou De Casa Noua", value: "cadou_de_casa_noua"},
+  { text: "Altceva"           , value: "altceva"        }
 ]
 const imgHumanList = {
   barbat: { "mai_mic_18": man18, "18_25": man1825, "26_35": man2635, "36_45": man3645, "46_60": man4660, "60_plus": man60},
@@ -153,55 +159,55 @@ const imgOccasionList = {
 }
 
 const typeList = [
-  { name: "Clasic"   , value: "clasic_type"   },
-  { name: "Amuzant"  , value: "amuzant_type"  },
-  { name: "Romantic" , value: "romantic_type" },
-  { name: "Practic"  , value: "practic_type"  },
-  { name: "Excentric", value: "excentric_type"},
-  { name: "Donatie"  , value: "donatie_type"  },
-  { name: "Handmade" , value: "handmade_type" },
+  { text: "Clasic"   , value: "clasic_type"   },
+  { text: "Amuzant"  , value: "amuzant_type"  },
+  { text: "Romantic" , value: "romantic_type" },
+  { text: "Practic"  , value: "practic_type"  },
+  { text: "Excentric", value: "excentric_type"},
+  { text: "Donatie"  , value: "donatie_type"  },
+  { text: "Handmade" , value: "handmade_type" },
 ]
 
 const characteristicsList = [
-  { name: "Sportiv"   , value: "sportiv_ch"    },
-  { name: "Sedentar"  , value: "sedentar_ch"   },
-  { name: "Amuzant"   , value: "amuzant_ch"    },
-  { name: "Serios"    , value: "serios_ch"     },
-  { name: "Altruist"  , value: "altruist_ch"   },
-  { name: "Egoist"    , value: "egoist_ch"     },
-  { name: "Copilaros" , value: "copilaros_ch"  },
-  { name: "Matur"     , value: "matur_ch"      },
-  { name: "Spontan"   , value: "spontan_ch"    },
-  { name: "Romantic"  , value: "romantic_ch"   },
-  { name: "Incapatan" , value: "incapatan_ch"  },
-  { name: "Nebunatic" , value: "nebunatic_ch"  },
-  { name: "Energic"   , value: "energic_ch"    }
+  { key: "Sportiv"   , text: "Sportiv"   , value: "sportiv_ch"    },
+  { key: "Sedentar"  , text: "Sedentar"  , value: "sedentar_ch"   },
+  { key: "Amuzant"   , text: "Amuzant"   , value: "amuzant_ch"    },
+  { key: "Serios"    , text: "Serios"    , value: "serios_ch"     },
+  { key: "Altruist"  , text: "Altruist"  , value: "altruist_ch"   },
+  { key: "Egoist"    , text: "Egoist"    , value: "egoist_ch"     },
+  { key: "Copilaros" , text: "Copilaros" , value: "copilaros_ch"  },
+  { key: "Matur"     , text: "Matur"     , value: "matur_ch"      },
+  { key: "Spontan"   , text: "Spontan"   , value: "spontan_ch"    },
+  { key: "Romantic"  , text: "Romantic"  , value: "romantic_ch"   },
+  { key: "Incapatan" , text: "Incapatan" , value: "incapatan_ch"  },
+  { key: "Nebunatic" , text: "Nebunatic" , value: "nebunatic_ch"  },
+  { key: "Energic"   , text: "Energic"   , value: "energic_ch"    }
 ]
 
 const interestsList = [
-  { name: "Animale"                  , value: "animale"                   },
-  { name: "Filme si Seriale"         , value: "filme_si_seriale"          },
-  { name: "Carti"                    , value: "carti"                     },
-  { name: "Sporturi"                 , value: "sporturi"                  },
-  { name: "Plante si natura"         , value: "plante_si_natura"          },
-  { name: "Istorie"                  , value: "istorie"                   },
-  { name: "Muzica"                   , value: "muzica"                    },
-  { name: "Arta"                     , value: "arta"                      },
-  { name: "Gatit"                    , value: "gatit"                     },
-  { name: "Cosmetice"                , value: "cosmetice"                 },
-  { name: "Moda"                     , value: "moda"                      },
-  { name: "Boardgames and Puzzles"   , value: "boardgames_and_puzzles"    },
-  { name: "Decoratiuni Interioare"   , value: "decoratiuni_interioare"    },
-  { name: "Tehnologie"               , value: "tehnologie"                },
-  { name: "Jucarii"                  , value: "jucarii"                   },
-  { name: "Fotografie si Filmografie", value: "fotografie_si_filmografie" }
+  { key: "Animale"                  , text: "Animale"                  , value: "animale"                   },
+  { key: "Filme si Seriale"         , text: "Filme si Seriale"         , value: "filme_si_seriale"          },
+  { key: "Carti"                    , text: "Carti"                    , value: "carti"                     },
+  { key: "Sporturi"                 , text: "Sporturi"                 , value: "sporturi"                  },
+  { key: "Plante si natura"         , text: "Plante si natura"         , value: "plante_si_natura"          },
+  { key: "Istorie"                  , text: "Istorie"                  , value: "istorie"                   },
+  { key: "Muzica"                   , text: "Muzica"                   , value: "muzica"                    },
+  { key: "Arta"                     , text: "Arta"                     , value: "arta"                      },
+  { key: "Gatit"                    , text: "Gatit"                    , value: "gatit"                     },
+  { key: "Cosmetice"                , text: "Cosmetice"                , value: "cosmetice"                 },
+  { key: "Moda"                     , text: "Moda"                     , value: "moda"                      },
+  { key: "Boardgames and Puzzles"   , text: "Boardgames and Puzzles"   , value: "boardgames_and_puzzles"    },
+  { key: "Decoratiuni Interioare"   , text: "Decoratiuni Interioare"   , value: "decoratiuni_interioare"    },
+  { key: "Tehnologie"               , text: "Tehnologie"               , value: "tehnologie"                },
+  { key: "Jucarii"                  , text: "Jucarii"                  , value: "jucarii"                   },
+  { key: "Fotografie si Filmografie", text: "Fotografie si Filmografie", value: "fotografie_si_filmografie" }
 ]
 
 const budgetList = [
-  { name: "Sub 100 lei"  , value: "mai_mic_100"},
-  { name: "100-200 lei"  , value: "100_200"    },
-  { name: "200-300 lei"  , value: "200_300"    },
-  { name: "Peste 300 lei", value: "300_plus"   }
+  { text: "Sub 100 lei"  , value: "mai_mic_100"},
+  { text: "100-200 lei"  , value: "100_200"    },
+  { text: "200-300 lei"  , value: "200_300"    },
+  { text: "Peste 300 lei", value: "300_plus"   }
 ]
 
 const progress = [1, 2, 3, 4, 5, 6, 7]
@@ -228,6 +234,11 @@ class Quiz extends React.Component {
       chosenGiftCharacteristics: [],
       chosenInterests: [],
       chosenBudget: "",
+      width: window.innerWidth,
+      height: 0,
+      displayGifts: false,
+      allGifts: [],
+      loadingResults: false
     };
     this.onChangeValue = this.onChangeValue.bind(this);
     this.onChangeValue2 = this.onChangeValue2.bind(this);
@@ -237,6 +248,24 @@ class Quiz extends React.Component {
     this.onChangeValue6 = this.onChangeValue6.bind(this);
     this.onChangeValue7 = this.onChangeValue7.bind(this);
     this.onChangeValue8 = this.onChangeValue8.bind(this);
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    this.updateField = this.updateField.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    // document.addEventListener('mousedown', this.handleClickOutside);
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    // document.removeEventListener('mousedown', this.handleClickOutside);
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    console.log(window.innerWidth)
+    this.setState({...this.state, width: window.innerWidth, height: window.innerHeight });
   }
 
   onChangeValue(event) {
@@ -360,10 +389,19 @@ class Quiz extends React.Component {
 
   toggle = (nameHide, nameShow) => {
     this.setState({...this.state, [nameShow]: true, [nameHide]: false });
+    console.log(nameShow)
+    if(nameShow === 'displayQuestion1'){
+      this.setState({...this.state, [nameShow]: true, [nameHide]: false , chosenRelationship: "" });
+      console.log(this.state.chosenRelationship)
+    }
+    if(nameShow === 'finishQuiz'){
+      this.setState({...this.state, [nameShow]: true, [nameHide]: false , allGifts: [] });
+      console.log(this.state.chosenRelationship)
+    }
+
   };
 
   hideAll = () => {
-
     this.setState({ displayQuestion1: false, displayQuestion2: false });
   };
 
@@ -383,9 +421,9 @@ class Quiz extends React.Component {
       x = 6
     else if (this.state.displayQuestion7 == true)
       x = 7
-    else if (this.state.displayQuestion8 == true || this.state.finishQuiz == true)
+    else if (this.state.displayQuestion8 == true || this.state.finishQuiz == true || this.state.displayGifts)
       x = 8
-    console.log(`x is ${x}`)
+    // console.log(`x is ${x}`)
     return x
   }
 
@@ -397,16 +435,17 @@ class Quiz extends React.Component {
     else {
       exists = this.state.[field] == value
     }
-    console.log ("saved function")
-    console.log (field)
-    console.log(value)
-    console.log(exists)
     return exists
   }
 
   submit = () => {
+    this.toggle("finishQuiz","loadingResults");
+    var price = this.state.chosenBudget
+    if (!price) {
+      price = "mai_mic_300"
+    }
     var payload = {
-      price: this.state.chosenBudget,
+      price: price,
       tags: [
         this.state.chosenSex,
         this.state.chosenAge,
@@ -425,45 +464,88 @@ class Quiz extends React.Component {
 
   handleError = (err) => {
     console.log(err)
-    alert(err.response.data.error)
   }
   handleSuccessfulPost = (res) => {
     console.log(res.status)
     console.log(res)
-    alert('Successful post!')
+    for(var i = 0; i < res.data.length; i++) {
+      this.state.allGifts.push(res.data[i]);
+    }
+    setTimeout(this.func, 700, "loadingResults","displayGifts");
+    // alert('Successful post!')
+    // this.toggle("loadingResults","displayGifts");
+  }
+
+  func = (a1, a2) => {
+    this.toggle("loadingResults","displayGifts");
+  }
+
+  updateField = (e, {value, name}) => {
+      console.log(value)
+      this.setState({
+        ...this.state,
+        [name]: value
+      });
+      console.log(this.state[name])
+    }
+
+  getMatchValue = (gift) => {
+    var x = Math.floor(gift.match * 100)/100
+    console.log(`gift.match ${gift.match}`)
+    console.log(`match is ${x}`)
+    return x
   }
   render() {
+    const { width } = this.state
+
     return (
       <div className="Quiz">
         <ResponsiveContainer>
           {/* <Segment id='seg1' style={{ padding: '2em 0em'}} vertical> */}
           <Segment id='seg1' style={{ padding: '2em 0em'}} vertical>
             <div id="quiz-content">
-              <Grid container stackable>
+              <Grid container stackable centered>
 
                 <Grid.Row centered>
                   <div id="quiz-progress-div">
                     { progress.map((e) =>
                       <React.Fragment>
-                        <div className={(this.getProgress() >= e ? "level-compleated" : null) + " level-round-div"} >
-                          <p className="level-p"> {e} </p>
+                        <div
+                          className={(this.getProgress() >= e ? "level-compleated" : null) + " level-round-div"}
+                          style={ width > 500 ? { minHeight: '40px', minWidth: '40px' } : { minHeight: '20px', minWidth: '20px' }}
+                          >
+                          <p
+                            className="level-p"
+                            style={  width > 500 ? {padding: '6px 9px 5px 14px',  fontWeight: '700', fontSize: '15pt'} : {padding: '2px 0px 0px 6px', fontWeight: '700', fontSize: '9pt'}}
+                          > {e} </p>
                         </div>
-                        <div className={(this.getProgress() > e  ? "level-compleated" : null) + " line"}>
+                        <div
+                          className={(this.getProgress() > e  ? "level-compleated" : null) + " line"}
+                          style={ width > 500 ? { height: '4px', width: '3em' } : { minHeight: '2px', minWidth: '1em' }}
+                          >
                         </div>
                       </React.Fragment>
                       )}
-                    <div className={(this.getProgress() == 8 ? "level-compleated" : null) + " level-round-div"} >
-                      <p className="level-p"> 8 </p>
+                    <div
+                      className={(this.getProgress() == 8 ? "level-compleated" : null) + " level-round-div"}
+                      style={ width > 500 ?  { minHeight: '40px', minWidth: '40px' } : { minHeight: '20px', minWidth: '20px' }}
+                      >
+                      <p
+                      className="level-p"
+                      style={  width > 500 ? {padding: '6px 9px 5px 14px',  fontWeight: '700', fontSize: '15pt'} : {padding: '2px 0px 0px 6px', fontWeight: '700', fontSize: '9pt'}}
+                      > 8 </p>
                     </div>
                   </div>
                 </Grid.Row>
 
                 <Grid.Row columns={3}>
                   {/* quiz column*/}
+                  { this.state.displayGifts == false && this.state.loadingResults == false ?
                   <Grid.Column width={5}>
                     {/* choose sex*/}
                     {this.state.displayQuestion1 ?
                     <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti sexul persoanei pentru care cautati cadou: </p>
                       <div className="question-item" onChange={this.onChangeValue}>
                         <input type="radio" value="barbat" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex" ,"barbat")} onChange={this.onChangeValue} className="radio"/>
@@ -472,20 +554,20 @@ class Quiz extends React.Component {
                         <input type="radio" value="femeie" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex","femeie")} className="radio"/>
                         <label>Femeie</label>
                       </div>
-                      <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">Continua</Button>
+
                     </div> : null}
 
                     {/* choose age*/}
                     {this.state.displayQuestion2 ?
                     <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion1")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion3")}} id="continua-btn">Continua</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion1")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion3")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti categoria de varsta a persoanei pentru care cautati cadou: </p>
                       <div className="question-item" onChange={this.onChangeValue2}>
                         {ageList.map((elem) =>
                           <React.Fragment key={elem.value.toString()} >
                             <input type="radio" value={elem.value} name="age" style={{marginRight: "5px"}} checked={this.savedValue("chosenAge",elem.value)} className="radio"/>
-                            <label> {elem.name} </label>
+                            <label> {elem.text} </label>
                             <br/>
                           </React.Fragment>
                          )}
@@ -495,37 +577,28 @@ class Quiz extends React.Component {
                     {/* choose relationship*/}
                     {this.state.displayQuestion3 ?
                       <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion2")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion4")}} id="continua-btn">Continua</Button>
-                      <p className="question-text-p"> Alegeti relatia pe care o aveti nu persoana pentru care cautati cadoul: </p>
-                      {this.state.chosenSex == "barbat" ? (
-                        <div className="question-item" onChange={this.onChangeValue3}>
-                          {barbatRoleList.map((elem) =>
-                            <React.Fragment key={elem.value.toString()}>
-                              <input type="radio" value={elem.value} name="role" checked={this.savedValue("chosenRelationship",elem.value)} className="radio"/> {elem.name}
-                              <br/>
-                            </React.Fragment>
-                          )}
-                        </div> ) : ( <div className="question-item"onChange={this.onChangeValue3}>
-                          {femeieRoleList.map((elem) =>
-                            <React.Fragment key={elem.value.toString()}>
-                              <input type="radio" value={elem.value} name="role" checked={this.savedValue("chosenRelationship",elem.value)} className="radio"/> {elem.name}
-                              <br/>
-                            </React.Fragment>
-                          )}
-                        </div> )}
+                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion2")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion4")}} id="continua-btn">CONTINUA</Button>
+                      <p className="question-text-p"> Alegeti relatia pe care o aveti cu persoana pentru care cautati cadoul: </p>
+                      {this.state.chosenSex ?
+                        (this.state.chosenSex == "barbat" ?
+                          <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.barbat} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
+                          : <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.femeie} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
+                        )
+                        : <p> Please go back to question 1 and choose the sex of the person first!</p>
+                      }
                     </div> : null}
 
                     {/* choose occasion*/}
                     {this.state.displayQuestion4 ?
                     <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion3")}} id="back-btn">Back</Button>
-                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion5")}} id="continua-btn">Continua</Button>
+                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion3")}} id="back-btn">INAPOI</Button>
+                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion5")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti ocazia pentru care oferiti cadoul: </p>
                       <div className="question-item" onChange={this.onChangeValue4}>
                         {occasionList.map((elem) =>
                           <React.Fragment key={elem.value.toString()}>
-                            <input type="radio" value={elem.value} name="ocasion" checked={this.savedValue("chosenOccasion",elem.value)} className="radio"/> {elem.name}
+                            <input type="radio" value={elem.value} name="ocasion" checked={this.savedValue("chosenOccasion",elem.value)} className="radio"/> {elem.text}
                             <br/>
                           </React.Fragment>
                         )}
@@ -535,13 +608,13 @@ class Quiz extends React.Component {
                     {/* choose present type*/}
                     {this.state.displayQuestion5 ?
                     <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion4")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion6")}} id="continua-btn">Continua</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion4")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion6")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti tipul de cadou dorit: </p>
                       <div className="question-item">
                         {typeList.map((elem) =>
                           <React.Fragment key={elem.value.toString()}>
-                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue5} checked={this.savedValue("chosenGiftType",elem.value)}/> {elem.name}
+                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue5} checked={this.savedValue("chosenGiftType",elem.value)}/> {elem.text}
                             <br/>
                           </React.Fragment>
                         )}
@@ -550,46 +623,32 @@ class Quiz extends React.Component {
 
                     {/* choose present characteristics*/}
                     {this.state.displayQuestion6 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion5")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion7")}} id="continua-btn">Continua</Button>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion5")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion7")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti caracteristicile cadoului dorit: </p>
-                      <div className="question-item">
-                        {characteristicsList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()}>
-                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue6} checked={this.savedValue("chosenGiftCharacteristics",elem.value)}/> {elem.name}
-                            <br/>
-                          </React.Fragment>
-                        )}
-                      </div>
+                      <Dropdown placeholder='Caracteristici cadou' fluid multiple selection scrolling options={characteristicsList} onChange={this.updateField} name='chosenGiftCharacteristics' value={this.state.chosenGiftCharacteristics}/>
                     </div> : null}
 
                     {/* choose person interests*/}
                     {this.state.displayQuestion7 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion6")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion8")}} id="continua-btn">Continua</Button>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion6")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion8")}} id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti interesele persoanei: </p>
-                      <div className="question-item">
-                        {interestsList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()}>
-                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue7} checked={this.savedValue("chosenInterests",elem.value)}/> {elem.name}
-                            <br/>
-                          </React.Fragment>
-                        )}
-                      </div>
+                      <Dropdown placeholder='Interese persoana' fluid multiple selection scrolling options={interestsList} onChange={this.updateField} name='chosenInterests' value={this.state.chosenInterests}/>
                     </div> : null}
 
                     {/* choose budget*/}
                     {this.state.displayQuestion8 ?
                     <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion8","displayQuestion7")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion8","finishQuiz")}}       id="continua-btn">Continua</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion8","displayQuestion7")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion8","finishQuiz")}}       id="continua-btn">CONTINUA</Button>
                       <p className="question-text-p"> Alegeti bugetul pentru cadoul dorit: </p>
                       <div className="question-item">
                         {budgetList.map((elem) =>
                           <React.Fragment key={elem.value.toString()}>
-                            <input type="radio" value={elem.value} name="gender" onChange={this.onChangeValue8} className="radio" checked={this.savedValue("chosenBudget", elem.value)}/> {elem.name}
+                            <input type="radio" value={elem.value} name="gender" onChange={this.onChangeValue8} className="radio" checked={this.savedValue("chosenBudget", elem.value)}/> {elem.text}
                             <br/>
                           </React.Fragment>
                       )}
@@ -597,13 +656,17 @@ class Quiz extends React.Component {
                     </div> : null}
 
                     {this.state.finishQuiz ?
-                    <div>
-                      <p id="great-p"> Great! </p>
-                      <Button onClick={(e) => {this.toggle("finishQuiz","displayQuestion8")}} id="back-btn">Back</Button>
-                      <Button onClick={(e) => {this.submit()}}       id="continua-btn">Finish quiz</Button>
-                    </div> : null}
-                  </Grid.Column>
+                    <div style={{textAlign: "left", marginLeft: "45px"}}>
+                      <Button onClick={(e) => {this.toggle("finishQuiz","displayQuestion8")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.submit()}}       id="continua-btn">FINALIZEAZA</Button>
+                      <p id="great-p"> Ati parcurs toate intrebarile! </p>
+                      <p id="review-p"> Puteti reveni oricand la intrebari  pentru a edita raspunsurile. </p>
 
+                    </div>
+                    : null}
+                  </Grid.Column> : null}
+
+                  {this.state.displayGifts == false && this.state.loadingResults == false?
                   <Grid.Column id="quiz-img-column" width={7} floated="left">
                     {/* images */}
                       {this.state.chosenRelationship ?
@@ -615,12 +678,12 @@ class Quiz extends React.Component {
                       {this.state.chosenOccasion ?
                         <Image src={imgOccasionList.[this.state.chosenOccasion]} id="quiz-img"/>
                       : null}
-                  </Grid.Column>
+                  </Grid.Column> : null}
 
+                  {this.state.displayGifts == false && this.state.loadingResults == false?
                   <Grid.Column id="selected-bubbles-column" width={4}>
                   {/* selected-bubbles on the right of the screen */}
                     <div className="selected-bubbles-div">
-
                       <Grid.Row>
                       {this.state.chosenSex?
                         <div className="buble-div b1"> <p className="buble-p"> {this.state.chosenSex == 'femeie'? "Femeie" : "Barbat"} </p>  </div>
@@ -629,17 +692,17 @@ class Quiz extends React.Component {
                       {this.state.chosenAge?
                         <div className="buble-div b2">
                           <p className="buble-p">
-                            {ageList.find( e => {return e.value == this.state.chosenAge}).name}
+                            {ageList.find( e => {return e.value == this.state.chosenAge}).text}
                           </p>
                         </div>
                       : null}
 
-                      {this.state.chosenRelationship?
+                      {this.state.chosenSex && this.state.chosenRelationship?
                         <div className="buble-div b3">
                           <p className="buble-p">
-                            {this.state.chosenSex == "femeie"?
-                            femeieRoleList.find( e => {return e.value == this.state.chosenRelationship}).name
-                            : barbatRoleList.find( e => {return e.value == this.state.chosenRelationship}).name}
+                            {this.state.chosenRelationship && this.state.chosenSex == "femeie"?
+                            roleList.femeie.find( e => {return e.value == this.state.chosenRelationship}).text
+                            : roleList.barbat.find( e => {return e.value == this.state.chosenRelationship}).text}
                           </p>
                         </div>
                       : null}
@@ -647,15 +710,15 @@ class Quiz extends React.Component {
                       {this.state.chosenOccasion?
                         <div className="buble-div b4">
                           <p className="buble-p">
-                            {occasionList.find( e => {return e.value == this.state.chosenOccasion}).name}
+                            {occasionList.find( e => {return e.value == this.state.chosenOccasion}).text}
                           </p>
                         </div>
                       : null}
 
                       {this.state.chosenBudget?
-                        <div className="buble-div b1">
+                        <div className="buble-div b5">
                           <p className="buble-p">
-                            {budgetList.find( e => {return e.value == this.state.chosenBudget}).name}
+                            {budgetList.find( e => {return e.value == this.state.chosenBudget}).text}
                           </p>
                         </div>
                       : null}
@@ -668,9 +731,9 @@ class Quiz extends React.Component {
                       }
                       {this.state.chosenGiftType.length != 0 ? (
                         this.state.chosenGiftType.map ( (type) =>
-                          <div className="buble-div b5">
+                          <div className="buble-div b2">
                             <p className="buble-p">
-                              { typeList.find( e => {return e.value == type }).name}
+                              { typeList.find( e => {return e.value == type }).text}
                             </p>
                           </div>
                         )
@@ -680,14 +743,14 @@ class Quiz extends React.Component {
 
                       <Grid.Row>
                       {this.state.chosenGiftCharacteristics.length != 0 ?
-                        <p class="small-label"> Characteristici cadou: </p>
+                        <p class="small-label"> Caracteristici cadou: </p>
                        : null
                       }
                       {this.state.chosenGiftCharacteristics.length != 0?
                         this.state.chosenGiftCharacteristics.map ( (type) =>
                           <div className="buble-div b1">
                             <p className="buble-p">
-                              { characteristicsList.find( e => {console.log(type); return e.value == type }).name}
+                              { characteristicsList.find( e => {console.log(type); return e.value == type }).text}
                             </p>
                           </div>
                         )
@@ -701,9 +764,9 @@ class Quiz extends React.Component {
                       }
                       {this.state.chosenInterests.length != 0?
                         this.state.chosenInterests.map ( (type) =>
-                          <div className="buble-div b2">
+                          <div className="buble-div b3">
                             <p className="buble-p">
-                              { interestsList.find( e => {return e.value == type }).name}
+                              { interestsList.find( e => {return e.value == type }).text}
                             </p>
                           </div>
                         )
@@ -711,7 +774,48 @@ class Quiz extends React.Component {
                       </Grid.Row>
                     </div>
 
-                  </Grid.Column>
+                  </Grid.Column> : null}
+
+                  {this.state.loadingResults == true ?
+                    <Image src={loading} alt="loading..." circular id="loading"/>
+                  : null }
+
+
+                  {this.state.displayGifts ?
+                    <div>
+                        <Button onClick={(e) => {this.toggle("displayGifts","finishQuiz")}} id="back-quiz-btn"> <Icon name='left arrow' /> INTREBARI</Button>
+                        { this.state.allGifts.length > 0 ?
+                          <p id="great-p"> Lista de cadouri </p>
+                          : <p id="bad-p"> Ne pare rau, nu am gasit cadouri potrivite <Icon name='meh outline'/> </p>
+                         }
+
+                        <div>
+                        {console.log("this.state.allGifts: din map", this.state.allGifts)}
+                        <br/>
+                        <Card.Group itemsPerRow={ width < 500 ? '1' : '4'} centered>
+                          {this.state.allGifts.map((gift, i) =>
+                            <Card key={i} id="gift-column" style={ width < 500 ? {maxWidth: '70%'} : null }>
+                              <Image src={gift.imagine} wrapped ui={false} />
+                              <Card.Content>
+                                <Card.Header>{gift.nume}</Card.Header>
+                                <Card.Meta>
+                                  <span><a href={gift.link}>Link produs</a></span>
+                                </Card.Meta>
+                                <Card.Description>
+                                  {gift.pret} RON
+                                </Card.Description>
+                              </Card.Content>
+                              <Card.Content extra>
+                                <a>
+                                  Potrivire
+                                   <Progress id="bar" percent={this.getMatchValue(gift)} color='#FED137' progress/>
+                                </a>
+                              </Card.Content>
+                            </Card>
+                          )}
+                        </Card.Group>
+                      </div>
+                  </div> : null}
                 </Grid.Row>
              </Grid>
              </div>

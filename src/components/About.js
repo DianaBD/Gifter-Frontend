@@ -3,12 +3,13 @@ import { createMedia } from "@artsy/fresnel"
 import PropTypes from 'prop-types'
 import DesktopContainer from './DesktopContainer'
 
-import React from 'react'
+import React, { Component } from 'react'
 
 import {
     Grid,
     Image,
-    Segment
+    Segment,
+    Container
 } from 'semantic-ui-react'
 
 const { MediaContextProvider } = createMedia({
@@ -41,49 +42,78 @@ ResponsiveContainer.propTypes = {
     children: PropTypes.node,
 }
 
-function About() {
+class About extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      width: window.innerWidth
+    }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    // this.handleClickOutside = this.handleClickOutside.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    // document.removeEventListener('mousedown', this.handleClickOutside);
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    console.log(window.innerWidth)
+    this.setState({...this.state, width: window.innerWidth, height: window.innerHeight });
+  }
+  render () {
+    const { width } = this.state
+
     return (
         <div className="About">
             <ResponsiveContainer>
-               <Segment id='seg1' style={{ padding: '2em 0em'}} vertical>
+               <Segment id='seg1' style={{ padding: '2em 0em'}} vertical >
                 {/*    <Grid divided inverted stackable>*/}
-                <div className="text-center">
-                    <p className="text-muted2">There are souls in this world who have the gift of finding joy everywhere,
-                        and leaving it behind them when they go. It's a shame though we can't actually wrap and offer
-                        joy.</p>
-                    <p className="text-muted2">So when you find yourself in need of something a bit more physical,</p>
-                    <img className="img-fluid d-block mx-auto" src="/logo_small.png" alt=""/>
-                    <p className="text-muted2">will come up with the best ideas!</p>
-                </div>
+
+                  <div className="text-center" >
+                      <p id="title-about" style={ width > 500 ? { marginLeft: '42%', marginRight: '15%'} : { marginLeft: '12%', marginRight: '6%'}}> Despre noi.. </p>
+                      <p id="text-up1" className="text-muted2" style={ width > 500 ? { marginLeft: '42%', marginRight: '15%'} : { marginLeft: '12%', marginRight: '6%'}}>
+                        <strong> Exista</strong> in lume suflete care au darul de a raspandi bucurie celor din jur,
+                        dar si de a se bucura de orice lucru marunt.
+                          Din pacate, bucuria nu poate fi conservata pentru a o darui mai departe.</p>
+                      <p id="text-up2" className="text-muted2" style={ width > 500 ? { marginLeft: '42%', marginRight: '7%'} : { marginLeft: '11%', marginRight: '6%'}}>
+                        Asadar, cand te afli in dificultate si ai nevoie sa gasesti rapid un cadou concret pentru a-l oferi cuiva,
+                      <strong> Gifter</strong> vine in ajutorul tau cu cele mai bune idei!</p>
+                  </div>
                     <Grid container stackable verticalAlign='middle'>
-                        <Grid.Row>
+                        <Grid.Row centered>
                             <Grid.Column width={5}>
                                 <div className="row text-center">
                                     <div className="col-md-4">
                                         <div>
                                            <Image alt='sss' src={`/about1.png`} id="logo1" circular/>
                                         </div>
-                                        <h4 className="my-3" style={{ fontSize: '2em' }}>SAVE TIME</h4>
-                                        <p className="text-muted">Find interesting ideas<br/>faster than you can say
-                                            "gift".</p>
+
+                                        <h4 className="my-3" style={{ fontSize: '2em' }}>ECONOMISESTE TIMP</h4>
+                                        <p className="text-muted">Gaseste idei interesante<br/> cat ai bate din palme </p>
                                     </div>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={5}>
                                 <div className="row text-center">
                                     <div className="col-md-4">
-                                        <Image alt='sss' src={`/about2.png`} id="logo1"/>
-                                        <h4 className="my-3"style={{ fontSize: '2em' }}>BE ORIGINAL</h4>
-                                        <p className="text-muted">Easiest way to show them<br/>how much you care.</p>
+                                        <Image alt='sss' src={`/about2.png`} id="logo1" circular/>
+                                        <h4 className="my-3"style={{ fontSize: '2em' }}>FII ORIGINAL</h4>
+                                        <p className="text-muted">Cel mai usor mod de a ii arata<br/>cat de mult tii la ea/el.</p>
                                     </div>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={5}>
                                 <div className="row text-center">
                                     <div className="col-md-4">
-                                        <Image alt='sss' src={`/about3.png`} id="logo1"/>
-                                        <h4 className="my-3"style={{ fontSize: '2em' }}>PERSONALIZE<br/>YOUR SEARCH</h4>
-                                        <p className="text-muted">Lots of options, customized just for you!</p>
+                                        <Image alt='sss' src={`/about3.png`} id="logo1" circular/>
+                                        <h4 className="my-3"style={{ fontSize: '2em' }}>PERSONALIZEAZA</h4>
+                                        <p className="text-muted">Multe filtre de cautare,<br/> pregatite pentru tine!</p>
                                     </div>
                                 </div>
                             </Grid.Column>
@@ -93,6 +123,7 @@ function About() {
             </ResponsiveContainer>
         </div>
     );
+  }
 }
 
 export default About;
