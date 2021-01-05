@@ -457,7 +457,7 @@ class Quiz extends React.Component {
       ]
     }
     console.log(payload);
-    axios.post(`http://us-central1-gifter-51063.cloudfunctions.net/app/filter`, payload)
+    axios.post(`https://us-central1-gifter-51063.cloudfunctions.net/app/filter`, payload)
       .then( res => this.handleSuccessfulPost(res))
       .catch( err => this.handleError(err))
   }
