@@ -472,6 +472,7 @@ class Quiz extends React.Component {
       this.state.allGifts.push(res.data[i]);
     }
     setTimeout(this.func, 700, "loadingResults","displayGifts");
+    this.state.allGifts.sort( (e1,e2) => { return e2.match - e1.match })
     // alert('Successful post!')
     // this.toggle("loadingResults","displayGifts");
   }
@@ -626,7 +627,7 @@ class Quiz extends React.Component {
                     <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion5")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion7")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti caracteristicile cadoului dorit: </p>
+                      <p className="question-text-p"> Alegeti caracteristicile persoanei: </p>
                       <Dropdown placeholder='Caracteristici cadou' fluid multiple selection scrolling options={characteristicsList} onChange={this.updateField} name='chosenGiftCharacteristics' value={this.state.chosenGiftCharacteristics}/>
                     </div> : null}
 

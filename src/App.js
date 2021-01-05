@@ -7,7 +7,7 @@ import { HashRouter, Switch, Route, Link, Redirect } from 'react-router-dom'
 import Home from './components/Home'
 import About from './components/About'
 import Quiz from './components/Quiz'
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import {
   Button,
   Container,
@@ -32,6 +32,11 @@ import {
  // <Button as={Link} to="/quiz"> Quiz </Button>
 function App() {
   const [showFixedMenu, toggleFixedMenu] = useState(true)
+
+  useEffect(() => {
+    document.title = "Gifter"
+  }, [])
+
   return (
     <div className="App">
       <HashRouter basename="/">

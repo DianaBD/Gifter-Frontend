@@ -121,14 +121,14 @@ class DesktopContainer extends Component {
                         ACASA
                         </Button>
                       </Link>
-                      <Link to='/quiz'>
-                        <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
-                        QUIZ
-                        </Button>
-                      </Link>
                       <Link to='/about'>
                         <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
                         DESPRE NOI
+                        </Button>
+                      </Link>
+                      <Link to='/quiz'>
+                        <Button id="menu-btn-left" renderAs='button' className={ fixed == true? 'transparent' : 'top' }>
+                        QUIZ
                         </Button>
                       </Link>
                     </div>
@@ -143,16 +143,17 @@ class DesktopContainer extends Component {
                         ACASA
                         </Button>
                       </Link>
-                      <Link to='/quiz'>
-                        <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
-                        QUIZ
-                        </Button>
-                      </Link>
                       <Link to='/about'>
                         <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
                         DESPRE NOI
                         </Button>
                       </Link>
+                      <Link to='/quiz'>
+                        <Button id="menu-btn" renderAs='button' className={ fixed == true? 'transparent' : 'top' } onClick={this.hideFixedMenu}>
+                        QUIZ
+                        </Button>
+                      </Link>
+
                     </div>
                   : (
                     <React.Fragment>

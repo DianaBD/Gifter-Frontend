@@ -76,9 +76,11 @@ class About extends Component {
                 {/*    <Grid divided inverted stackable>*/}
 
                   <div className="text-center" >
-                      <p id="title-about" style={ width > 500 ? { marginLeft: '42%', marginRight: '15%'} : { marginLeft: '12%', marginRight: '6%'}}> Despre noi.. </p>
+                      {
+                      // <p id="title-about" style={ width > 500 ? { marginLeft: '42%', marginRight: '15%'} : { marginLeft: '12%', marginRight: '6%'}}> Despre noi.. </p>
+                      }
                       <p id="text-up1" className="text-muted2" style={ width > 500 ? { marginLeft: '42%', marginRight: '15%'} : { marginLeft: '12%', marginRight: '6%'}}>
-                        <strong> Exista</strong> in lume suflete care au darul de a raspandi bucurie celor din jur,
+                        Exista in lume suflete care au darul de a raspandi bucurie celor din jur,
                         dar si de a se bucura de orice lucru marunt.
                           Din pacate, bucuria nu poate fi conservata pentru a o darui mai departe.</p>
                       <p id="text-up2" className="text-muted2" style={ width > 500 ? { marginLeft: '42%', marginRight: '7%'} : { marginLeft: '11%', marginRight: '6%'}}>
