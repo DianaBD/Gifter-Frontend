@@ -65,7 +65,8 @@ import {
   Radio,
   Card,
   Progress,
-  Dropdown
+  Dropdown,
+  Popup
 } from 'semantic-ui-react'
 
 const { MediaContextProvider, Media } = createMedia({
@@ -154,8 +155,7 @@ const imgOccasionList = {
   craciun : craciun,
   paste: paste,
   dragobete: dragobete,
-  cadou_de_casa_noua : cadou_de_casa_noua,
-  altceva : altceva
+  cadou_de_casa_noua : cadou_de_casa_noua
 }
 
 const typeList = [
@@ -169,19 +169,19 @@ const typeList = [
 ]
 
 const characteristicsList = [
-  { key: "Sportiv"   , text: "Sportiv"   , value: "sportiv_ch"    },
-  { key: "Sedentar"  , text: "Sedentar"  , value: "sedentar_ch"   },
-  { key: "Amuzant"   , text: "Amuzant"   , value: "amuzant_ch"    },
-  { key: "Serios"    , text: "Serios"    , value: "serios_ch"     },
-  { key: "Altruist"  , text: "Altruist"  , value: "altruist_ch"   },
-  { key: "Egoist"    , text: "Egoist"    , value: "egoist_ch"     },
-  { key: "Copilaros" , text: "Copilaros" , value: "copilaros_ch"  },
-  { key: "Matur"     , text: "Matur"     , value: "matur_ch"      },
-  { key: "Spontan"   , text: "Spontan"   , value: "spontan_ch"    },
-  { key: "Romantic"  , text: "Romantic"  , value: "romantic_ch"   },
-  { key: "Incapatan" , text: "Incapatan" , value: "incapatan_ch"  },
-  { key: "Nebunatic" , text: "Nebunatic" , value: "nebunatic_ch"  },
-  { key: "Energic"   , text: "Energic"   , value: "energic_ch"    }
+  { key: "Sportiv"     , text: "Sportiv"     , value: "sportiv_ch"    },
+  { key: "Sedentar"    , text: "Sedentar"    , value: "sedentar_ch"   },
+  { key: "Amuzant"     , text: "Amuzant"     , value: "amuzant_ch"    },
+  { key: "Serios"      , text: "Serios"      , value: "serios_ch"     },
+  { key: "Altruist"    , text: "Altruist"    , value: "altruist_ch"   },
+  { key: "Egoist"      , text: "Egoist"      , value: "egoist_ch"     },
+  { key: "Copilaros"   , text: "Copilaros"   , value: "copilaros_ch"  },
+  { key: "Matur"       , text: "Matur"       , value: "matur_ch"      },
+  { key: "Spontan"     , text: "Spontan"     , value: "spontan_ch"    },
+  { key: "Romantic"    , text: "Romantic"    , value: "romantic_ch"   },
+  { key: "Incapatanat" , text: "Incapatanat" , value: "incapatan_ch"  },
+  { key: "Nebunatic"   , text: "Nebunatic"   , value: "nebunatic_ch"  },
+  { key: "Energic"     , text: "Energic"     , value: "energic_ch"    }
 ]
 
 const interestsList = [
@@ -388,6 +388,11 @@ class Quiz extends React.Component {
   }
 
   toggle = (nameHide, nameShow) => {
+    if(nameHide === 'displayQuestion1' && this.state.chosenSex == "") {
+      this.state.showPopup = true;
+      return
+    }
+
     this.setState({...this.state, [nameShow]: true, [nameHide]: false });
     console.log(nameShow)
     if(nameShow === 'displayQuestion1'){
@@ -397,6 +402,10 @@ class Quiz extends React.Component {
     if(nameShow === 'finishQuiz'){
       this.setState({...this.state, [nameShow]: true, [nameHide]: false , allGifts: [] });
       console.log(this.state.chosenRelationship)
+    }
+    if(nameHide === 'displayQuestion1' && this.state.chosenSex == "") {
+      this.state.showPopup = true;
+      return
     }
 
   };
@@ -545,80 +554,107 @@ class Quiz extends React.Component {
                   <Grid.Column width={5}>
                     {/* choose sex*/}
                     {this.state.displayQuestion1 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti sexul persoanei pentru care cautati cadou: </p>
-                      <div className="question-item" onChange={this.onChangeValue}>
-                        <input type="radio" value="barbat" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex" ,"barbat")} onChange={this.onChangeValue} className="radio"/>
-                        <label>Barbat</label>
-                        <br/>
-                        <input type="radio" value="femeie" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex","femeie")} className="radio"/>
-                        <label>Femeie</label>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
+                      { this.state.chosenSex == "" ?
+                        <Popup content='Add users to your feed'
+                          content={ "Trebuie sa raspundeti la intrebare pentru a continua!"}
+                          on={['click']}
+                          trigger={
+                            <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">CONTINUA</Button>
+                        } />
+                        : <Button onClick={(e) => {this.toggle("displayQuestion1","displayQuestion2")}} id="continua-btn">CONTINUA</Button>
+                      }
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti sexul persoanei pentru care cautati cadou: </p>
+                          <div className="question-item" onChange={this.onChangeValue}>
+                            <input type="radio" value="barbat" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex" ,"barbat")} onChange={this.onChangeValue} className="radio"/>
+                            <label>Barbat</label>
+                            <br/>
+                            <input type="radio" value="femeie" name="gender" style={{marginRight: "5px"}} checked={this.savedValue("chosenSex","femeie")} className="radio"/>
+                            <label>Femeie</label>
+                          </div>
+                        </div>
                       </div>
-
                     </div> : null}
 
                     {/* choose age*/}
                     {this.state.displayQuestion2 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion1")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion2","displayQuestion3")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti categoria de varsta a persoanei pentru care cautati cadou: </p>
-                      <div className="question-item" onChange={this.onChangeValue2}>
-                        {ageList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()} >
-                            <input type="radio" value={elem.value} name="age" style={{marginRight: "5px"}} checked={this.savedValue("chosenAge",elem.value)} className="radio"/>
-                            <label> {elem.text} </label>
-                            <br/>
-                          </React.Fragment>
-                         )}
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti categoria de varsta a persoanei pentru care cautati cadou: </p>
+                          <div className="question-item" onChange={this.onChangeValue2}>
+                            {ageList.map((elem) =>
+                              <React.Fragment key={elem.value.toString()} >
+                                <input type="radio" value={elem.value} name="age" style={{marginRight: "5px"}} checked={this.savedValue("chosenAge",elem.value)} className="radio"/>
+                                <label> {elem.text} </label>
+                                <br/>
+                              </React.Fragment>
+                             )}
+                          </div>
+                        </div>
                       </div>
                     </div> : null}
 
                     {/* choose relationship*/}
                     {this.state.displayQuestion3 ?
-                      <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion2")}} id="back-btn">INAPOI</Button>
-                      <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion4")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti relatia pe care o aveti cu persoana pentru care cautati cadoul: </p>
-                      {this.state.chosenSex ?
-                        (this.state.chosenSex == "barbat" ?
-                          <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.barbat} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
-                          : <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.femeie} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
-                        )
-                        : <p> Please go back to question 1 and choose the sex of the person first!</p>
-                      }
+                      <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
+                        <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion2")}} id="back-btn">INAPOI</Button>
+                        <Button onClick={(e) => {this.toggle("displayQuestion3","displayQuestion4")}} id="continua-btn">CONTINUA</Button>
+                        <div className="pannel-div">
+                          <div className="inside-pannel-div">
+                            <p className="question-text-p"> Alegeti relatia pe care o aveti cu persoana pentru care cautati cadoul: </p>
+                            {this.state.chosenSex ?
+                              (this.state.chosenSex == "barbat" ?
+                                <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.barbat} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
+                                : <Dropdown placeholder='Relatie' fluid selection scrolling options={roleList.femeie} onChange={this.updateField} name='chosenRelationship' value={this.state.chosenRelationship}/>
+                              )
+                              : <p> Please go back to question 1 and choose the sex of the person first!</p>
+                            }
+                          </div>
+                        </div>
                     </div> : null}
 
                     {/* choose occasion*/}
                     {this.state.displayQuestion4 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
-                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion3")}} id="back-btn">INAPOI</Button>
-                    <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion5")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti ocazia pentru care oferiti cadoul: </p>
-                      <div className="question-item" onChange={this.onChangeValue4}>
-                        {occasionList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()}>
-                            <input type="radio" value={elem.value} name="ocasion" checked={this.savedValue("chosenOccasion",elem.value)} className="radio"/> {elem.text}
-                            <br/>
-                          </React.Fragment>
-                        )}
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
+                      <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion3")}} id="back-btn">INAPOI</Button>
+                      <Button onClick={(e) => {this.toggle("displayQuestion4","displayQuestion5")}} id="continua-btn">CONTINUA</Button>
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti ocazia pentru care oferiti cadoul: </p>
+                          <div className="question-item" onChange={this.onChangeValue4}>
+                            {occasionList.map((elem) =>
+                              <React.Fragment key={elem.value.toString()}>
+                                <input type="radio" value={elem.value} name="ocasion" checked={this.savedValue("chosenOccasion",elem.value)} className="radio"/> {elem.text}
+                                <br/>
+                              </React.Fragment>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div> : null}
 
                     {/* choose present type*/}
                     {this.state.displayQuestion5 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion4")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion5","displayQuestion6")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti tipul de cadou dorit: </p>
-                      <div className="question-item">
-                        {typeList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()}>
-                            <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue5} checked={this.savedValue("chosenGiftType",elem.value)}/> {elem.text}
-                            <br/>
-                          </React.Fragment>
-                        )}
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti unul sau mai multe tipuri de cadou: </p>
+                          <div className="question-item">
+                            {typeList.map((elem) =>
+                              <React.Fragment key={elem.value.toString()}>
+                                <Checkbox color="primary" value={elem.value} onChange={this.onChangeValue5} checked={this.savedValue("chosenGiftType",elem.value)}/> {elem.text}
+                                <br/>
+                              </React.Fragment>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div> : null}
 
@@ -627,8 +663,12 @@ class Quiz extends React.Component {
                     <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion5")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion6","displayQuestion7")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti caracteristicile persoanei: </p>
-                      <Dropdown placeholder='Caracteristici cadou' fluid multiple selection scrolling options={characteristicsList} onChange={this.updateField} name='chosenGiftCharacteristics' value={this.state.chosenGiftCharacteristics}/>
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti caracteristicile persoanei: </p>
+                          <Dropdown placeholder='Caracteristici' fluid multiple selection scrolling options={characteristicsList} onChange={this.updateField} name='chosenGiftCharacteristics' value={this.state.chosenGiftCharacteristics}/>
+                        </div>
+                      </div>
                     </div> : null}
 
                     {/* choose person interests*/}
@@ -636,23 +676,31 @@ class Quiz extends React.Component {
                     <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion6")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion7","displayQuestion8")}} id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti interesele persoanei: </p>
-                      <Dropdown placeholder='Interese persoana' fluid multiple selection scrolling options={interestsList} onChange={this.updateField} name='chosenInterests' value={this.state.chosenInterests}/>
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti interesele persoanei: </p>
+                          <Dropdown placeholder='Interese persoana' fluid multiple selection scrolling options={interestsList} onChange={this.updateField} name='chosenInterests' value={this.state.chosenInterests}/>
+                        </div>
+                      </div>
                     </div> : null}
 
                     {/* choose budget*/}
                     {this.state.displayQuestion8 ?
-                    <div style={{textAlign: "left", marginLeft: "45px", fontFamily: "Arial", fontWeight: "bold", fontSize: "15px"}}>
+                    <div className="question-div" style={ width < 500 ? { maxWidth: '75%'} :  { maxWidth: '100%' }}>
                       <Button onClick={(e) => {this.toggle("displayQuestion8","displayQuestion7")}} id="back-btn">INAPOI</Button>
                       <Button onClick={(e) => {this.toggle("displayQuestion8","finishQuiz")}}       id="continua-btn">CONTINUA</Button>
-                      <p className="question-text-p"> Alegeti bugetul pentru cadoul dorit: </p>
-                      <div className="question-item">
-                        {budgetList.map((elem) =>
-                          <React.Fragment key={elem.value.toString()}>
-                            <input type="radio" value={elem.value} name="gender" onChange={this.onChangeValue8} className="radio" checked={this.savedValue("chosenBudget", elem.value)}/> {elem.text}
-                            <br/>
-                          </React.Fragment>
-                      )}
+                      <div className="pannel-div">
+                        <div className="inside-pannel-div">
+                          <p className="question-text-p"> Alegeti bugetul pentru cadoul dorit: </p>
+                          <div className="question-item">
+                            {budgetList.map((elem) =>
+                              <React.Fragment key={elem.value.toString()}>
+                                <input type="radio" value={elem.value} name="gender" onChange={this.onChangeValue8} className="radio" checked={this.savedValue("chosenBudget", elem.value)}/> {elem.text}
+                                <br/>
+                              </React.Fragment>
+                          )}
+                          </div>
+                        </div>
                       </div>
                     </div> : null}
 
@@ -670,21 +718,26 @@ class Quiz extends React.Component {
                   {this.state.displayGifts == false && this.state.loadingResults == false?
                   <Grid.Column id="quiz-img-column" width={7} floated="left">
                     {/* images */}
-                      {this.state.chosenRelationship ?
-                        <Image src={imgRelationshipList.[this.state.chosenRelationship]} id="quiz-img"/>
-                      : null}
-                      {this.state.chosenSex && this.state.chosenAge ?
-                        <Image src={imgHumanList.[this.state.chosenSex][this.state.chosenAge]} id="quiz-img" />
-                      : null}
-                      {this.state.chosenOccasion ?
-                        <Image src={imgOccasionList.[this.state.chosenOccasion]} id="quiz-img"/>
-                      : null}
+                      <div style={ width > 500 ? {marginLeft: '40px', marginTop: '15px'} : {marginLeft: '-10px'}}>
+                        {this.state.chosenRelationship ?
+                          <Image src={imgRelationshipList.[this.state.chosenRelationship]} id="quiz-img"/>
+                        : null}
+                        {this.state.chosenSex ?
+                          ( this.state.chosenAge ?
+                            <Image src={imgHumanList.[this.state.chosenSex][this.state.chosenAge]} id="quiz-img" />
+                            : <Image src={imgHumanList.[this.state.chosenSex].['18_25']} id="quiz-img" />
+                          ) : null
+                        }
+                        {this.state.chosenOccasion ?
+                          <Image src={imgOccasionList.[this.state.chosenOccasion]} id="quiz-img"/>
+                        : null}
+                      </div>
                   </Grid.Column> : null}
 
                   {this.state.displayGifts == false && this.state.loadingResults == false?
                   <Grid.Column id="selected-bubbles-column" width={4}>
                   {/* selected-bubbles on the right of the screen */}
-                    <div className="selected-bubbles-div">
+                    <div className="selected-bubbles-div" style={ width > 500 ? {marginLeft: '-10px', marginTop: '40px'} : {marginLeft: '0px'}}>
                       <Grid.Row>
                       {this.state.chosenSex?
                         <div className="buble-div b1"> <p className="buble-p"> {this.state.chosenSex == 'femeie'? "Femeie" : "Barbat"} </p>  </div>
@@ -732,7 +785,7 @@ class Quiz extends React.Component {
                       }
                       {this.state.chosenGiftType.length != 0 ? (
                         this.state.chosenGiftType.map ( (type) =>
-                          <div className="buble-div b2">
+                          <div className="buble-div b3">
                             <p className="buble-p">
                               { typeList.find( e => {return e.value == type }).text}
                             </p>
@@ -744,7 +797,7 @@ class Quiz extends React.Component {
 
                       <Grid.Row>
                       {this.state.chosenGiftCharacteristics.length != 0 ?
-                        <p class="small-label"> Caracteristici cadou: </p>
+                        <p class="small-label"> Caracteristici: </p>
                        : null
                       }
                       {this.state.chosenGiftCharacteristics.length != 0?
@@ -765,7 +818,7 @@ class Quiz extends React.Component {
                       }
                       {this.state.chosenInterests.length != 0?
                         this.state.chosenInterests.map ( (type) =>
-                          <div className="buble-div b3">
+                          <div className="buble-div b2">
                             <p className="buble-p">
                               { interestsList.find( e => {return e.value == type }).text}
                             </p>
@@ -784,7 +837,7 @@ class Quiz extends React.Component {
 
                   {this.state.displayGifts ?
                     <div>
-                        <Button onClick={(e) => {this.toggle("displayGifts","finishQuiz")}} id="back-quiz-btn"> <Icon name='left arrow' /> INTREBARI</Button>
+                        <Button onClick={(e) => {this.toggle("displayGifts","finishQuiz")}} id="back-quiz-btn"> <Icon name='left arrow' /> INAPOI  LA  QUIZ</Button>
                         { this.state.allGifts.length > 0 ?
                           <p id="great-p"> Lista de cadouri </p>
                           : <p id="bad-p"> Ne pare rau, nu am gasit cadouri potrivite <Icon name='meh outline'/> </p>

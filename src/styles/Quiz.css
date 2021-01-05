@@ -62,7 +62,7 @@ background-color: #cc323c; */
   outline-color: transparent;
   box-shadow: none;
   display: block;
-  margin-left: -20px;
+  margin-left: -10px;
   animation-duration: 1s;
   animation-name: appear;
 }
@@ -75,6 +75,7 @@ background-color: #cc323c; */
 .selected-bubbles-div {
   text-align: left;
   position: relative;
+
 }
 
 .buble-div {
@@ -135,8 +136,8 @@ background-color: #cc323c; */
   background-color: transparent;
   min-width: max-content;
   font-size: 9pt;
-  color: var(--light-gray);
-  font-weight: 100;
+  color: var(--dark-gray);
+  font-weight: 700;
   margin-left: 10px;
   margin-bottom: 2px;
 }
@@ -171,6 +172,17 @@ background-color: #cc323c; */
   vertical-align: middle;
   color: var(--white);
 
+}
+
+.pannel-div {
+  background-color: var(--yellow);
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.inside-pannel-div {
+  /* position: absolute; */
+  padding: 20px 20px 20px 20px;
 }
 
 .question-div {
@@ -211,19 +223,24 @@ background-color: #cc323c; */
 .question-text-p {
   margin-top: 15px;
   margin-bottom: 5px;
-  font-size: 15pt;
-  font-weight: lighter;
-  color: var(--light-black);
+  font-size: 13pt;
+  font-weight: 600;
+  /* color: var(--yellow); */
+  /* color: var(--light-black); */
+  color: var(--white);
 }
 
 .question-item{
   font-size: 12pt;
-  font-weight: lighter;
+  font-weight: normal;
   color: var(--light-black);
+  /* color: var(--yellow); */
+  margin-top: 15px;
+  margin-left: 15px;
 }
 
 .radio{
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 #gift-column {
